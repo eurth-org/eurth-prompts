@@ -1,0 +1,24 @@
+---
+// The guide: how to use a prompt, alone or with a group, with sources and the day it was last
+// brought up to date. The words live in src/content/guide.md, where a test keeps them honest.
+import { article } from '@eurth/style/build';
+import Page from '@eurth/style/components/Page.astro';
+import { site } from '../../eurth.config.mjs';
+import { Content, frontmatter } from '../content/guide.md';
+import { formatDate } from '../prompts/calendar';
+
+const { title, description } = frontmatter;
+// The front matter's date arrives as text or as a date, depending on how it was written.
+const updated = new Date(frontmatter.updated).toISOString().slice(0, 10);
+const [year, month, day] = updated.split('-').map(Number);
+---
+
+<Page site={site} title={title} description={description} crumbs={[{ name: 'Guide', path: '/guide/' }]} jsonld={[article(site, { headline: title, path: '/guide/', description, updated })]}>
+  <article class="eu-prose">
+    <p class="eu-kicker">Guide</p>
+    <h1>{title}</h1>
+    <Content />
+    <p class="eu-muted">Last updated <time datetime={updated}>{formatDate({ month: month!, day: day! })} {year}</time>.</p>
+    <p><a class="eu-btn eu-btn--primary" href="/">Today's prompt</a> <a class="eu-btn" href="/archive/">Every prompt</a></p>
+  </article>
+</Page>

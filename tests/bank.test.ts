@@ -3,7 +3,8 @@
  * rules; whether the bank is complete and approved is launch.test.ts's business.
  */
 import { describe, expect, it } from 'vitest';
-import { APPROVED_BATCHES, BANK, PROMPTS, launchProblems } from '../src/prompts/bank';
+import { BANK, PROMPTS } from '../src/prompts/bank';
+import { APPROVED_BATCHES, launchProblems } from '../src/prompts/launch';
 import { dateFor, formatDate } from '../src/prompts/calendar';
 import { checkBank, errors } from '../src/prompts/check';
 import { BANK_SIZE, LOST_PROVINCE, find, type BankEntry, type ThemeId } from '../src/prompts/model';

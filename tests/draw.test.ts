@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byMonth, byTheme, daysBefore, earlierThisMonth, moreFromTheme, neighbours } from '../src/prompts/archive';
+import { byMonth, byTheme, daysBefore, earlierThisMonth, moreFromTheme, neighbours, onOrAfter } from '../src/prompts/archive';
 import { PROMPTS } from '../src/prompts/bank';
 import { yearOrder } from '../src/prompts/calendar';
 import { draw } from '../src/prompts/draw';
@@ -164,6 +164,22 @@ describe('the archive', () => {
     expect(moreFromTheme([prompt(1, 'politics')], prompt(1, 'politics'))).toEqual([]);
     // The easter egg is Geography: it gets the theme's first prompts.
     expect(numbers(moreFromTheme(year, LOST_PROVINCE))).toEqual([6, 14, 22]);
+  });
+});
+
+describe('the prompt for a day', () => {
+  it('is the day\'s own prompt once the bank is whole', () => {
+    expect(onOrAfter(year, { month: 12, day: 14 })?.n).toBe(348);
+    expect(onOrAfter(year, { month: 2, day: 29 })?.n).toBe(366);
+    expect(onOrAfter(year, { month: 1, day: 1 })?.n).toBe(1);
+  });
+
+  it('is the next day\'s that has one while the bank is being written, round the end of the year', () => {
+    const some = [prompt(5), prompt(344), prompt(348)];
+    expect(onOrAfter(some, { month: 11, day: 15 })?.n).toBe(344);
+    expect(onOrAfter(some, { month: 12, day: 11 })?.n).toBe(348);
+    expect(onOrAfter(some, { month: 12, day: 20 })?.n).toBe(5);
+    expect(onOrAfter([], { month: 1, day: 1 })).toBeUndefined();
   });
 });
 

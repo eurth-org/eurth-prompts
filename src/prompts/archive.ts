@@ -2,7 +2,7 @@
  * The bank laid out for reading: by theme, by month, a prompt's neighbours, and the days
  * before today. All of it works on a partly written bank, skipping days that have no prompt yet.
  */
-import { hasDate, inYearOrder, isLeapYear, monthName, numberFor, yearOrder, dateFor, type MonthDay } from './calendar';
+import { dateFor, hasDate, inYearOrder, isLeapYear, monthName, numberFor, placeInYear, yearOrder, type MonthDay } from './calendar';
 import { THEMES, type Prompt, type ThemeId } from './model';
 
 export interface ThemeGroup<T extends Prompt> {
@@ -83,4 +83,15 @@ export function moreFromTheme<T extends Prompt>(prompts: readonly T[], prompt: P
   const index = sameTheme.findIndex((other) => other.n === prompt.n);
   const after = index === -1 ? others : [...sameTheme.slice(index + 1), ...sameTheme.slice(0, index)];
   return after.slice(0, count);
+}
+
+/**
+ * The prompt for a day, or, while the bank is still being written and that day has none, the
+ * next day's that has. Undefined only for an empty bank. Once all 366 are in, this is simply
+ * the day's own prompt.
+ */
+export function onOrAfter<T extends Prompt>(prompts: readonly T[], date: MonthDay): T | undefined {
+  const ordered = inYearOrder(prompts);
+  const place = placeInYear(numberFor(date));
+  return ordered.find((prompt) => placeInYear(prompt.n) >= place) ?? ordered[0];
 }

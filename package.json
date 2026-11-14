@@ -3,19 +3,35 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Prompts: a worldbuilding prompt a day, by Eurth. The logic and the words; the site follows once @eurth/style 1.0.0 is released.",
+  "description": "Prompts: a worldbuilding prompt a day, by Eurth. One question about your own nation for every day of the year.",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "check": "tsc --noEmit",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "npm run build && wrangler dev",
+    "check": "astro check",
     "test": "vitest run",
-    "launch-check": "LAUNCH_CHECK=1 vitest run tests/launch.test.ts"
+    "launch-check": "LAUNCH_CHECK=1 vitest run tests/launch.test.ts",
+    "axe": "eurth-axe dist",
+    "images": "node tools/make-images.mjs",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^9.1.6",
+    "@eurth/style": "github:eurth-org/eurth-style#semver:^1",
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
+    "astro": "^7.4.12",
+    "svelte": "^5.57.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@types/node": "^22.19.1",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.162.0"
   }
 }

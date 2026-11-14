@@ -1,0 +1,84 @@
+---
+// Today: the prompt for the day, and under it what search engines and newcomers both want:
+// what this is, how to use it, and answers to the usual questions.
+//
+// The page is built with the prompt for the day in Brussels at build time (the nightly run
+// rebuilds it just after midnight), so it reads right without JavaScript. With JavaScript, the
+// tool then follows the visitor's own date.
+import { buildTime, faqPage, webApplication } from '@eurth/style/build';
+import Page from '@eurth/style/components/Page.astro';
+import { site } from '../../eurth.config.mjs';
+import { onOrAfter } from '../prompts/archive';
+import { PROMPTS } from '../prompts/bank';
+import { DEFAULT_TIME_ZONE, todayIn } from '../prompts/calendar';
+import { BANK_SIZE, THEMES } from '../prompts/model';
+import { cardLook, cardMark } from '../site/look';
+import { FORUM_CATEGORY } from '../site/settings';
+import PromptTool from '../tool/PromptTool.svelte';
+
+const today = todayIn(DEFAULT_TIME_ZONE, buildTime());
+const prompt = onOrAfter(PROMPTS, today)!;
+const themes = THEMES.map((theme) => theme.name.toLowerCase());
+
+const faq = [
+  { q: 'Is Prompts free?', a: 'Yes. There is no account, no paid tier and nothing to sign up for. It is made by the Eurth worldbuilding community for anyone who builds worlds.' },
+  {
+    q: 'Does everyone get the same prompt?',
+    a: `Yes. Each day of the year has its own prompt, ${BANK_SIZE} in all with the leap day, and it follows your own calendar: everyone whose date is the same sees the same prompt, and it comes round again next year.`,
+  },
+  {
+    q: "Does it remember which prompts I've answered?",
+    a: 'No. Nothing is stored, on your device or anywhere else: no streaks, no history. Your answers live wherever you keep your world. The archive lists every prompt if you want to find one again.',
+  },
+  {
+    q: 'Can I use the prompts for my own world or writing group?',
+    a: 'Please do. They are written for realistic invented nations, but they ask about your nation, not ours. The guide has ways to use them with a group.',
+  },
+  { q: 'Does it work offline, and on a phone?', a: 'Yes to both. After the first visit the site keeps a copy of itself on your device, with every prompt in it, and opens without a connection.' },
+];
+---
+
+<Page site={site} jsonld={[webApplication(site, { featureList: ['A new worldbuilding prompt every day', `${BANK_SIZE} prompts in eight themes`, 'A random prompt, from any theme or one', 'A page for every prompt', 'The prompt as a picture, in six sizes'] }), faqPage(faq)]}>
+  <div class="eu-stack">
+    <PromptTool
+      client:load
+      start={prompt.n}
+      today={today}
+      siteName={site.name}
+      siteTitle={site.title}
+      siteUrl={site.url}
+      siteHost={site.host}
+      forumCategory={FORUM_CATEGORY}
+      look={cardLook()}
+      mark={cardMark()}
+    />
+
+    <section class="eu-prose">
+      <h2>How it works</h2>
+      <ol>
+        <li>Read today's prompt. It states something about your nation as already true, and asks what follows.</li>
+        <li>Decide, in three to six sentences: why, who paid, who gained, who still objects.</li>
+        <li>Put the answer where your world lives, or answer on the Eurth forum and see what your neighbours made of it.</li>
+      </ol>
+      <p>
+        There are {BANK_SIZE} prompts, one for every day of a leap year, on {themes.slice(0, -1).join(', ')} and {themes.at(-1)}. Not in the mood for today's? Draw
+        another, or pick a theme. The <a href="/archive/">archive</a> has every prompt, and the <a href="/guide/">guide</a> shows how to answer one in ten minutes,
+        alone or with a group.
+      </p>
+
+      <h2>Questions</h2>
+      <dl>
+        {
+          faq.map((item) => (
+            <>
+              <dt>{item.q}</dt>
+              <dd>{item.a}</dd>
+            </>
+          ))
+        }
+      </dl>
+    </section>
+  </div>
+
+  <Fragment slot="inspirations">Prompts takes after the question lists worldbuilders have long passed around, and the forum's own habit of asking each other awkward things.</Fragment>
+</Page>

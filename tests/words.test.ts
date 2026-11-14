@@ -3,7 +3,7 @@ import { PROMPTS } from '../src/prompts/bank';
 import { altText, copyText, facts, label, shared } from '../src/prompts/describe';
 import { FORUM_NEW_TOPIC, LONGEST_LINK, forumBody, forumLink, forumTitle } from '../src/prompts/forum';
 import { LOST_PROVINCE, MAX_LENGTH, find, type Prompt } from '../src/prompts/model';
-import { SITE_PATHS, promptDescription, promptTitle, shorten, sitemapPaths } from '../src/prompts/pages';
+import { LONGEST_DESCRIPTION, SITE_PATHS, promptDescription, promptTitle, shorten, sitemapPaths } from '../src/prompts/pages';
 
 const SITE = 'https://prompt.eurth.org';
 const capital = find(PROMPTS, 348)!;
@@ -100,21 +100,31 @@ describe('page words', () => {
     expect(promptTitle(find(PROMPTS, 3)!)).toBe('Prompt 3: Does your nation have conscription');
   });
 
-  it('describes a prompt page with the whole prompt and its day', () => {
-    expect(promptDescription(capital)).toBe(
-      "Your nation's capital moved two centuries ago. Why, and who still resents it? The worldbuilding prompt for 14 December, on history: answer it for your own nation, alone or on the Eurth forum.",
-    );
-    expect(promptDescription(LOST_PROVINCE)).toContain('A worldbuilding prompt on geography:');
+  it('describes a prompt page with the prompt and its day', () => {
+    expect(promptDescription(capital)).toBe("Your nation's capital moved two centuries ago. Why, and who still resents it? The worldbuilding prompt for 14 December, on history.");
+    expect(promptDescription(LOST_PROVINCE)).toBe("Your nation's census office lost a whole province. Where did it go? A worldbuilding prompt on geography, and not one of the 366.");
+  });
+
+  it('keeps every description between 50 and 200 characters, cutting a long prompt at a word', () => {
+    const description = promptDescription(longest);
+    expect(description.length).toBeLessThanOrEqual(LONGEST_DESCRIPTION);
+    expect(description).toContain('… The worldbuilding prompt for 19 July, on daily life.');
+    const shortest: Prompt = { n: 121, theme: 'culture', text: 'Who cooks in your nation? Why?' };
+    expect(promptDescription(shortest).length).toBeGreaterThanOrEqual(50);
   });
 
   it('gives every page in the bank a different title and description, of a sensible length', () => {
-    const titles = PROMPTS.map(promptTitle);
-    const descriptions = PROMPTS.map(promptDescription);
-    expect(new Set(titles).size).toBe(PROMPTS.length);
-    expect(new Set(descriptions).size).toBe(PROMPTS.length);
+    const all = [...PROMPTS, LOST_PROVINCE];
+    const titles = all.map(promptTitle);
+    const descriptions = all.map(promptDescription);
+    expect(new Set(titles).size).toBe(all.length);
+    expect(new Set(descriptions).size).toBe(all.length);
     // With " · Prompts" added by the site, a title stays near what search results show.
     for (const title of titles) expect(title.length, title).toBeLessThanOrEqual(70);
-    for (const description of descriptions) expect(description.length).toBeLessThanOrEqual(MAX_LENGTH + 120);
+    for (const description of descriptions) {
+      expect(description.length, description).toBeGreaterThanOrEqual(50);
+      expect(description.length, description).toBeLessThanOrEqual(LONGEST_DESCRIPTION);
+    }
   });
 
   it('lists every prompt page in the sitemap, after the site\'s own pages, and leaves the easter egg out', () => {

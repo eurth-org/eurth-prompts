@@ -1,0 +1,53 @@
+---
+// One page per prompt, so the whole bank can be read, linked to and found without JavaScript.
+// /p/404/ is the easter egg: a prompt with no day, which the sitemap and the draw leave out.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Page from '@eurth/style/components/Page.astro';
+import { site } from '../../../eurth.config.mjs';
+import { PROMPTS } from '../../prompts/bank';
+import { altText } from '../../prompts/describe';
+import { promptPath } from '../../prompts/link';
+import { LOST_PROVINCE, type Prompt } from '../../prompts/model';
+import { promptDescription, promptTitle } from '../../prompts/pages';
+import { cardLook, cardMark } from '../../site/look';
+import { FORUM_CATEGORY } from '../../site/settings';
+import PromptTool from '../../tool/PromptTool.svelte';
+
+export function getStaticPaths() {
+  return [...PROMPTS, LOST_PROVINCE].map((prompt) => ({ params: { n: String(prompt.n) }, props: { prompt } }));
+}
+
+interface Props {
+  prompt: Prompt;
+}
+
+const { prompt } = Astro.props;
+// Each prompt's own sharing image, if "npm run images" has made it; the site's otherwise.
+const image = `/og/p-${prompt.n}.png`;
+const own = existsSync(join(process.cwd(), 'public', image));
+---
+
+<Page
+  site={site}
+  title={promptTitle(prompt)}
+  description={promptDescription(prompt)}
+  crumbs={[
+    { name: 'Archive', path: '/archive/' },
+    { name: `Prompt ${prompt.n}`, path: promptPath(prompt.n) },
+  ]}
+  ogImage={own ? image : undefined}
+  ogAlt={own ? altText(prompt, site.host) : undefined}
+>
+  <PromptTool
+    client:load
+    start={prompt.n}
+    siteName={site.name}
+    siteTitle={site.title}
+    siteUrl={site.url}
+    siteHost={site.host}
+    forumCategory={FORUM_CATEGORY}
+    look={cardLook()}
+    mark={cardMark()}
+  />
+</Page>

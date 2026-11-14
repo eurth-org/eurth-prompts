@@ -1,0 +1,32 @@
+---
+// Page not found, and the easter egg: prompt 404, about a province that went missing too.
+import Page from '@eurth/style/components/Page.astro';
+import { site } from '../../eurth.config.mjs';
+import { label } from '../prompts/describe';
+import { promptPath } from '../prompts/link';
+import { LOST_PROVINCE } from '../prompts/model';
+---
+
+<Page site={site} title="Page not found" description="This page doesn't exist. Today's prompt, the archive and the guide do." noindex>
+  <div class="eu-stack">
+    <div class="eu-prose">
+      <h1>Page not found</h1>
+      <p class="eu-lead">There's nothing at this address. It may have moved, or the link may have lost a letter on the way. Since you're here:</p>
+    </div>
+    <article class="eu-card">
+      <p class="eu-muted">{label(LOST_PROVINCE)}</p>
+      <p class="words">{LOST_PROVINCE.text}</p>
+      <p class="eu-row">
+        <a class="eu-btn eu-btn--primary" href={promptPath(LOST_PROVINCE.n)}>Answer that one</a>
+        <a class="eu-btn" href="/">Today's prompt</a>
+        <a class="eu-btn" href="/archive/">Every prompt</a>
+      </p>
+    </article>
+  </div>
+</Page>
+
+<style>
+  .words {
+    font: var(--type-headline-sm);
+  }
+</style>
