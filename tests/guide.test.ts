@@ -47,7 +47,9 @@ describe('the guide', () => {
         const known = (SITE_PATHS as readonly string[]).includes(href) || find(PROMPTS, numberFromPath(href) ?? 0) !== undefined;
         expect(known, href).toBe(true);
       } else {
+        // Links to other sites say where the visitor came from, as the handbook asks.
         expect(href, href).toMatch(/^https:\/\//);
+        expect(new URL(href).searchParams.get('ref'), href).toBe('prompt.eurth.org');
       }
     }
   });
@@ -66,6 +68,7 @@ describe('the guide', () => {
 
   it('mentions no other Eurth tool: a site never names a tool before its door opens', () => {
     expect(body).not.toMatch(/\b(Flagwright|Governmint|Dynasty|Seats|Stats|Cities|Anthem|Passport)\b/);
-    expect(body).not.toMatch(/[a-z]+\.eurth\.org/);
+    // Its own address appears only as the "ref" on links to other sites.
+    expect(body.replaceAll('ref=prompt.eurth.org', '')).not.toMatch(/[a-z]+\.eurth\.org/);
   });
 });

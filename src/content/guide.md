@@ -68,9 +68,9 @@ An answer becomes part of your world when it is written where others can find it
 
 ## Sources and further reading
 
-- Patricia C. Wrede, [Fantasy Worldbuilding Questions](https://pcwrede.com/fantasy-worldbuilding-questions/). The best-known list of worldbuilding questions. It was made for fantasy, but its sections on government, trade and daily life suit any invented nation.
-- Mark Rosenfelder, [The Planet Construction Kit](https://www.zompist.com/kit.html) (Yonagu Books, 2010). A practical handbook for building a world from its geography up to its daily life.
-- Mark J. P. Wolf, [Building Imaginary Worlds: The Theory and History of Subcreation](https://www.routledge.com/Building-Imaginary-Worlds-The-Theory-and-History-of-Subcreation/Wolf/p/book/9780415631204) (Routledge, 2012). On what makes an invented world feel complete and consistent.
-- Ursula K. Le Guin, [Steering the Craft](https://www.ursulakleguin.com/steering-the-craft) (revised edition, 2015). Writing exercises made to be done alone or in a small group, with advice on how a group should respond.
-- Peter Elbow, *Writing Without Teachers* (Oxford University Press, 1973). The source of timed [free writing](https://en.wikipedia.org/wiki/Free_writing) and of groups that respond by saying what they noticed.
-- [Worldbuilding](https://en.wikipedia.org/wiki/Worldbuilding) and [Geofiction](https://en.wikipedia.org/wiki/Geofiction), Wikipedia.
+- Patricia C. Wrede, [Fantasy Worldbuilding Questions](https://pcwrede.com/fantasy-worldbuilding-questions/?ref=prompt.eurth.org). The best-known list of worldbuilding questions. It was made for fantasy, but its sections on government, trade and daily life suit any invented nation.
+- Mark Rosenfelder, [The Planet Construction Kit](https://www.zompist.com/kit.html?ref=prompt.eurth.org) (Yonagu Books, 2010). A practical handbook for building a world from its geography up to its daily life.
+- Mark J. P. Wolf, [Building Imaginary Worlds: The Theory and History of Subcreation](https://www.routledge.com/Building-Imaginary-Worlds-The-Theory-and-History-of-Subcreation/Wolf/p/book/9780415631204?ref=prompt.eurth.org) (Routledge, 2012). On what makes an invented world feel complete and consistent.
+- Ursula K. Le Guin, [Steering the Craft](https://www.ursulakleguin.com/steering-the-craft?ref=prompt.eurth.org) (revised edition, 2015). Writing exercises made to be done alone or in a small group, with advice on how a group should respond.
+- Peter Elbow, *Writing Without Teachers* (Oxford University Press, 1973). The source of timed [free writing](https://en.wikipedia.org/wiki/Free_writing?ref=prompt.eurth.org) and of groups that respond by saying what they noticed.
+- [Worldbuilding](https://en.wikipedia.org/wiki/Worldbuilding?ref=prompt.eurth.org) and [Geofiction](https://en.wikipedia.org/wiki/Geofiction?ref=prompt.eurth.org), Wikipedia.

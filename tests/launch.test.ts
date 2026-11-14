@@ -6,7 +6,7 @@
  * evening before, so an unfinished bank stops the launch instead of going live. Before then
  * everyday runs stay green; "npm run launch-check" asks the question at any time.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BANK } from '../src/prompts/bank';
 import { APPROVED_BATCHES, launchProblems } from '../src/prompts/launch';
@@ -22,6 +22,11 @@ describe('the launch gate', () => {
 
   it.runIf(closed)('finds nothing between the bank and launch', () => {
     expect(launchProblems(BANK, APPROVED_BATCHES)).toEqual([]);
+  });
+
+  it.runIf(closed)('has a sharing image for every prompt', () => {
+    const missing = BANK.filter((entry) => !existsSync(new URL(`../public/og/p-${entry.n}.png`, import.meta.url))).map((entry) => entry.n);
+    expect(missing, 'run "npm run images" and commit what it writes').toEqual([]);
   });
 
   it.skipIf(closed)('is open until the door: run "npm run launch-check" to see what is left', () => {

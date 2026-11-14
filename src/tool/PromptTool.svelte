@@ -15,9 +15,9 @@
   import Icon from '@eurth/style/components/Icon.svelte';
   import ShareButtons from '@eurth/style/components/ShareButtons.svelte';
   import { onMount } from 'svelte';
-  import { earlierThisMonth, moreFromTheme, neighbours } from '../prompts/archive';
+  import { earlierThisMonth, moreFromTheme, neighbours, onOrAfter } from '../prompts/archive';
   import { PROMPTS } from '../prompts/bank';
-  import { dateFor, deviceTimeZone, formatDate, hasDate, numberFor, todayIn, type YearMonthDay } from '../prompts/calendar';
+  import { dateFor, deviceTimeZone, formatDate, hasDate, todayIn, type YearMonthDay } from '../prompts/calendar';
   import { CARD_SIZES, card, type CardLook, type CardMark, type CardSizeId } from '../prompts/card';
   import { copyText, label, shared } from '../prompts/describe';
   import { draw } from '../prompts/draw';
@@ -129,8 +129,7 @@
     } else if (isToday) {
       // The page was built for the day in Brussels; the visitor's own day may differ.
       date = visitorsToday();
-      const mine = find(PROMPTS, numberFor(date));
-      if (mine) prompt = mine;
+      prompt = onOrAfter(PROMPTS, date) ?? prompt;
     }
 
     // Back and forward walk through the prompts drawn on this visit.
@@ -141,7 +140,7 @@
       if (there) show(there, { push: false });
       else if (location.pathname === '/') {
         date = visitorsToday();
-        show(find(PROMPTS, numberFor(date)) ?? prompt, { asToday: true, push: false });
+        show(onOrAfter(PROMPTS, date) ?? prompt, { asToday: true, push: false });
       }
     };
     addEventListener('popstate', walked);
