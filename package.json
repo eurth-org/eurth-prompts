@@ -1,0 +1,21 @@
+{
+  "name": "eurth-prompts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Prompts: a worldbuilding prompt a day, by Eurth. The logic and the words; the site follows once @eurth/style 1.0.0 is released.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "launch-check": "LAUNCH_CHECK=1 vitest run tests/launch.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0"
+  }
+}
