@@ -6,14 +6,24 @@ Three parts: what comes next, what each release added (newest first), and what's
 
 ## Where to pick up
 
-**14 November 2026.** The brief is saved, the repository exists, this plan is written, and the first 30 prompts are drafted in [docs/review-batch-1.md](docs/review-batch-1.md). Nothing is built. Both the plan and the 30 prompts are waiting for Stijn; the next step is Phase 1, step 1.
+A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in eurth-org/eurth-style wins on everything shared.
 
-Waiting on others:
+**Done, all pushed, 129 tests green (`npm test`, `npm run check`):**
 
-- **Stijn: the plan.** A go-ahead, or changes.
-- **Stijn: review batch 1.** The 30 prompts set the voice for the rest. No more prompts are written until they are reviewed.
-- **Stijn: the forum category** for "Answer on the Eurth forum". The forum's new-topic link takes a category; without one the topic opens uncategorised.
-- **@eurth/style 1.0.0** is not released. On GitHub the repository holds only its brief; HANDBOOK.md and the starter template aren't pushed yet. Phase 2 can't start until it is: check `gh release list -R eurth-org/eurth-style`. This plan follows the handbook's rules as the foundations brief gives them; where the released handbook differs, the handbook wins.
+- The repo, the brief as `CLAUDE.md`, the licence, the README and this plan (approved by Stijn on 14 November 2026).
+- **The logic** in `src/prompts/`, plain TypeScript: the model (`model.ts`), the bank's rules and word lists (`check.ts`, `words.ts`), the calendar (`calendar.ts`), the order of the year (`order.ts`), Another prompt (`draw.ts`), the archive (`archive.ts`), addresses (`link.ts`), the forum link (`forum.ts`), Copy prompt and the Share dialog's words (`describe.ts`), page titles, descriptions and the sitemap list (`pages.ts`), and the card as SVG in the six sizes (`card.ts`). `bank.ts` is the only module that reads the files in `src/content/`.
+- **The bank so far:** 35 of 366 prompts in `src/content/prompts.json`: the mock-up's five on 10 to 14 December (batch 0, Stijn's own) and review batch 1 (30 prompts, on 22 December to 20 January, so launch day and the weeks after it have a prompt).
+- **The guide:** `src/content/guide.md`, with a worked example and seven sources. A test holds its links, its quoted prompt and its spelling.
+- **The launch gate:** `npm run launch-check` fails until all 366 prompts are written, sound, in order and in approved batches (`src/content/review.json`). The launch workflow must run it before deploying.
+
+**Waiting on Stijn:**
+
+- **Review batch 1** ([docs/review-batch-1.md](docs/review-batch-1.md)). No more prompts are written until it is reviewed. When it is: apply the changes to `src/content/prompts.json`, add `1` to `approved` in `src/content/review.json`, then write batch 2 (100 prompts) in the same voice as `docs/review-batch-2.md`.
+- **The forum category** for "Answer on the Eurth forum" (`forumLink` takes its slug). "Factbooks and National Information" looks closest.
+- **Topic titles on the forum.** Discourse refuses a second topic with a title that already exists unless the "allow duplicate topic titles" setting is on. Two members answering the same prompt would both use the prompt as the title. Either switch that setting on (for the whole forum or for the category), or the title gets the writer's nation in front, which they would have to type.
+- **The guide's example** uses the invented names Tesmar, Port Halden and Orrin. Say if any of them is already somebody's on Eurth.
+
+**@eurth/style 1.0.0 was released on 14 November 2026**, so the site is no longer blocked. Next: Phase 2, from its first step.
 
 ## Decisions in this plan (say if any is wrong)
 
@@ -26,30 +36,16 @@ Waiting on others:
 
 ## Next
 
-### Phase 1: the logic and the words (needs nothing from @eurth/style)
+### The prompt bank (the rest of Phase 1)
 
-Plain TypeScript in `src/prompts/`, tests in `tests/`, as Flagwright keeps its engine in `src/flag/`. Only TypeScript and Vitest are installed. Commit and push after each step.
+Phase 1's logic and guide are done (see "Where to pick up"). What is left of it is the writing:
 
-1. **Model and the bank's rules** (`model.ts`): the eight themes, a prompt (number, theme, text), and a check of the whole bank that the tests run:
-   - 366 prompts, numbered 1 to 366, none missing or doubled; six themes with 46 and two with 45.
-   - Each is one or two sentences, 200 characters at most, and speaks to "your nation" (or your capital, your army and so on).
-   - No two prompts share their opening words or ask the same thing twice.
-   - A word list catches what doesn't belong: real countries and peoples, magic and fantasy words, technology beyond today, American spellings, emoji.
-2. **Calendar** (`calendar.ts`): a date to its prompt number and back, and "today" in a time zone (Europe/Brussels by default, the visitor's own in the browser). Tested at midnight on both sides, across the clock changes, in leap and ordinary years, and in zones either side of the date line.
-3. **Order of the year** (tests on the data): the day after never has the same theme as the day before; every theme appears at least three times a month; a few prompts sit on dates that suit them (29 February, New Year, the mock-up's 10 to 14 December).
-4. **Another prompt** (`draw.ts`): a random draw, any theme or one, never the prompt already showing. The random source is passed in, so the tests are exact.
-5. **Archive** (`archive.ts`): the prompts by theme and by month, previous and next, and "Earlier this month".
-6. **Forum and sharing** (`forum.ts`, `describe.ts`): the new-topic link (the prompt as title; the prompt, its number and its link as body; the category), the text for Copy prompt, and the title and text the Share dialog needs.
-7. **The card** (`card.ts`): the prompt card as an SVG string in the handbook's six sizes (1200 x 630, 1080 x 1080, 1080 x 1350, 1080 x 1920, 1000 x 1500, 1600 x 900), with a title and description inside. Lines are wrapped by a table of letter widths; colours come in as a palette, so the site can pass @eurth/style's tokens later. A test checks that every prompt fits every size.
-8. **Page words** (`pages.ts`): a title and a description for each prompt page, each one different, and the list of addresses for the sitemap (Today, Archive, Guide and all 366 prompt pages).
-9. **The prompt bank** (`src/content/prompts.json`), in review batches:
-   - Batch 1: 30 prompts. Drafted, waiting for review.
-   - Batches 2 to 4: 100 prompts each, written in the reviewed voice, shown as `docs/review-batch-N.md`.
-   - Batch 5: the last 36.
-   - `src/content/review.json` records which batches Stijn has approved. A launch test fails while any batch is unapproved.
-10. **The guide** (`src/content/guide.md`): how to use a prompt alone (ten minutes, one decision, then what follows from it; turning an answer into a wiki paragraph or a factbook entry) and with a group (everyone answers the same prompt; neighbours answer for each other's nations; a prompt of the week on the forum; using a prompt to open a roleplay). What makes an answer good in realistic geofiction: costs, losers and consequences. With sources and a last-updated date.
+- Batch 1: 30 prompts. Drafted, waiting for review.
+- Batches 2 to 4: 100 prompts each, written in the reviewed voice, shown as `docs/review-batch-N.md`.
+- Batch 5: the last 36, with the leap day's prompt (366) and a few that suit their dates (New Year, 31 December).
+- Once all are in: `npm run launch-check` must pass. It also checks the order of the year: no theme two days running, every theme at least three times a month, 45 or 46 prompts a theme.
 
-### Phase 2: the site (only once @eurth/style 1.0.0 is released)
+### Phase 2: the site (@eurth/style 1.0.0 is out)
 
 11. Start from the starter template in eurth-style; read HANDBOOK.md first, and where it differs from this plan, the handbook wins.
 12. Pages: Today (`/`), Archive (`/archive/`, every prompt under its theme, readable without JavaScript), one page per prompt (`/p/1` to `/p/366`, plus `/p/404`), Guide (`/guide/`), and the "page not found" page. Each with its own title, description and canonical link; JSON-LD (WebApplication on Today, BreadcrumbList on prompt pages and the guide, Article on the guide, ItemList on the archive); sitemap.xml with every prompt page, robots.txt, llms.txt.

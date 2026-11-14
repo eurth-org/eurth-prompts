@@ -49,6 +49,12 @@ function tellingWords(text: string): Set<string> {
   return new Set(words(text).filter((word) => !smallWords.has(word)));
 }
 
+/** The words in a text that are spelt the American way ("color", "organize"). Used for the prompts and the guide. */
+export function americanSpellings(text: string): string[] {
+  const withZ = (text.match(izeWord) ?? []).filter((word) => !zIsFine.has(word.toLowerCase()));
+  return [...(text.match(american) ?? []), ...withZ];
+}
+
 /** How alike two sets of words are: 0 (nothing shared) to 1 (the same words). */
 function alike(a: Set<string>, b: Set<string>): number {
   let shared = 0;
@@ -85,10 +91,7 @@ export function checkPrompt(prompt: Prompt): Finding[] {
 
   for (const match of text.match(realPlaces) ?? []) error('real-place', `It names "${match}": prompts are never about a real country.`);
   for (const match of text.match(unreal) ?? []) error('unreal', `It says "${match}": no magic, aliens, fantasy races or technology beyond today.`);
-  for (const match of text.match(american) ?? []) error('spelling', `"${match}" is the American spelling.`);
-  for (const match of text.match(izeWord) ?? []) {
-    if (!zIsFine.has(match.toLowerCase())) error('spelling', `"${match}" is spelt with an s in British English.`);
-  }
+  for (const word of americanSpellings(text)) error('spelling', `"${word}" is the American spelling.`);
 
   if (!/\byour\b/i.test(text)) note('your', 'It never says "your": check it still asks about the writer\'s own nation.');
   return found;
