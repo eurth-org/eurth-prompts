@@ -33,7 +33,7 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 
 **Not checked yet:**
 
-- **Lighthouse.** It runs in CI on `main`; not run locally.
+- **Lighthouse on the newest pages.** CI's Lighthouse and axe steps passed on `main` on 14 November, and nothing was deployed (the door is shut). The Good prompts page and the nation field came after that run: look at the next one.
 - **The page turn**, by eye, in a browser with motion on.
 
 ## Decisions (say if any is wrong)
@@ -57,7 +57,7 @@ In order:
 1. **The prompt bank.** Batch 2 waits for review. Then batch 3 and 4 (100 each) and batch 5 (the last 31, with the leap day's prompt and a few that suit their dates: New Year, 31 December). The forum's list still has some 90 prompts not yet used (its sections on religion, health, education, language, foreign relations and "connecting the dots" above all); use those first, then write new ones in the voice of batch 1. The order of the year must hold once all are in: no theme two days running, every theme at least three times a month, 45 or 46 prompts a theme.
 2. **Sharing images at full size.** Each is about 65 kB as Chrome saves it, so 367 of them come to about 24 MB in the repository. If that is too much, save them with fewer colours (the card has five) before committing the full set.
 3. **The page turn by eye**, with motion on; fix what turns up.
-4. **Lighthouse** on `main` in CI: 100 in all four, or find out why not.
+4. **Lighthouse** on `main` in CI: it passes the suite's thresholds; look at the report for anything short of 100.
 5. **Launch:** 21 December 2026, 22:30 UTC, by the launch workflow. If it hasn't started by 22:45 UTC, start it by hand. Afterwards: delete `.github/workflows/launch.yml`, submit the sitemap in Search Console, add Prompts to status.eurth.org, and write the release's section below.
 
 ### Done when
