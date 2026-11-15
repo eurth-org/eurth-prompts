@@ -12,7 +12,7 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 
 - The repo, the brief as `CLAUDE.md`, the licence, the README and the plan (approved by Stijn on 14 November 2026).
 - **The logic** in `src/prompts/`, plain TypeScript. The README's table says which file holds what.
-- **The bank: 366 of 366, all reviewed and approved by Stijn** (15 November 2026), in `src/content/prompts.json`. 192 come from the Eurth forum's own Worldbuilding Prompts list (`"from": "forum"`), cut to fit the card; 5 are the mock-up's; 169 were written for the site. The review sheets are `docs/review-batch-1.md` to `-5.md`.
+- **The bank: 366 of 366, all reviewed and approved by Stijn** (15 November 2026), in `src/content/prompts.json`. 192 come from the Eurth forum's own Worldbuilding Prompts list (`"from": "forum"`), cut to fit the card; 5 are the mock-up's; 169 were written for the site. The review sheets are `docs/review-batch-1.md` to `-5.md`; they show each prompt on the day it has now.
 - **The guide** (`src/content/guide.md`) and **Good prompts** (`src/content/craft.ts`, `src/pages/good-prompts.astro`): seven marks of a good prompt with a weak and a strong example each, the cultural iceberg model with Orioni's forum topic, and where the prompts come from.
 - **The site**, from @eurth/style 1.0.0's starter template: Today, a page per prompt (and `/p/404/`), Archive, Guide, Good prompts and the not-found page, 372 pages in all, every prompt page in the sitemap; the prompt tool with Answer on the Eurth forum, Another prompt and its page turn, Copy prompt, the theme buttons, Earlier this month, previous and next, the share row and dialog, and the card as SVG, PNG or WebP in six sizes; a sharing image for every prompt (`public/og/`, 22 MB); the three workflows, with the launch set for 22 December.
 - **Answer on the Eurth forum** opens a new topic in Factbooks and National Information (category 25), titled "<Nation>: <prompt>". The forum allows a title only once, so the tool asks for the nation's name first; it is kept in memory for the page only.
@@ -20,9 +20,7 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 - **Checked in real Chrome** (15 November): the service worker installs and keeps 21 files; offline, Today, the archive and Good prompts open, a prompt's own address shows that prompt, and Another prompt still draws; nothing is stored.
 - **Settled with Stijn on 15 November:** the guide's invented names (Tesmar, Port Halden, Orrin) stand; "world" is spelt the ordinary way; the site has no glossary and no profile buttons, and its start page's title drops the pattern's "maker". Good prompts stands where templates or examples would.
 
-**Waiting on Stijn:**
-
-- **Whether to shuffle the days** (Next, item 2). It has to be decided before launch.
+**Waiting on Stijn:** nothing.
 
 **Not checked yet:**
 
@@ -41,7 +39,7 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 - **Pictures are always Night**, like the suite's sharing images, whichever theme the visitor is using.
 - **Sharing images only for approved prompts.** A prompt waiting for review uses the site's own sharing image until its words are settled.
 - **While the bank is unfinished**, a day with no prompt shows the next day's that has one. That can only be seen before launch: the launch gate needs all 366.
-- **The themes run in turn** from 21 January to 9 December (politics, history, culture, economy, military, geography, daily life, characters). It keeps the rules about order true by construction; the days can be shuffled before launch, while no address is public yet.
+- **The days were shuffled once, on 15 November 2026**, at Stijn's word, after all 366 were reviewed. The mock-up's five (10 to 14 December), batch 1 (22 December to 20 January) and the leap day's prompt stayed where they were; the other 330 were dealt out at random under the rules: no theme on two days running, every theme at least three times a month, and no theme away for more than two weeks (the longest wait is 13 days). **A prompt's number is its address: after launch it must never move.** Change a prompt's words if need be, never its number.
 - **The leap day's prompt** (366) asks about something that happens once every four years.
 
 ## Next
@@ -49,10 +47,9 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 In order:
 
 1. **The page turn by eye**, with motion on; fix what turns up.
-2. **The order of the days.** The themes run in turn from 21 January to 9 December (politics, history, culture, economy, military, geography, daily life, characters), which keeps the rules about order true by construction but means the same theme every eighth day. The days can be shuffled before launch, while no address is public yet; after launch a prompt's number is its address and must not move. A shuffle changes numbers, so run `npm run images` after it (every picture carries its date and number) and `npm run launch-check`.
-3. **The accessibility check takes long** with 372 pages: `eurth-axe` reads every one in both themes. The prompt pages differ only in their words, so ask Foundations for a way to check a sample of a set of like pages (a change to @eurth/style, not to this repository's workflows).
-4. **The sharing images weigh 22 MB** in the repository. If that becomes a nuisance, save them with fewer colours (the card has five).
-5. **Launch:** 21 December 2026, 22:30 UTC, by the launch workflow. If it hasn't started by 22:45 UTC, start it by hand. It needs the organisation's `CLOUDFLARE_API_TOKEN`. Afterwards: delete `.github/workflows/launch.yml`, submit the sitemap in Search Console, add Prompts to status.eurth.org, tag 1.0.0 and write the release's section below.
+2. **The accessibility check takes long** with 372 pages: `eurth-axe` reads every one in both themes. The prompt pages differ only in their words, so ask Foundations for a way to check a sample of a set of like pages (a change to @eurth/style, not to this repository's workflows).
+3. **The sharing images weigh 22 MB** in the repository. If that becomes a nuisance, save them with fewer colours (the card has five).
+4. **Launch:** 21 December 2026, 22:30 UTC, by the launch workflow. If it hasn't started by 22:45 UTC, start it by hand. It needs the organisation's `CLOUDFLARE_API_TOKEN`. Afterwards: delete `.github/workflows/launch.yml`, submit the sitemap in Search Console, add Prompts to status.eurth.org, tag 1.0.0 and write the release's section below.
 
 ### After launch
 

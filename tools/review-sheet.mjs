@@ -27,7 +27,7 @@ try {
     '',
     `Status: **${approved ? 'approved by Stijn' : "waiting for Stijn's review"}**${about.shown ? ` (shown ${day(about.shown)})` : ''}. ${about.what}.`,
     '',
-    `They sit on ${first} to ${last}, the themes in turn, so no theme falls on two days running. Dates and numbers may still move before launch; the words are what to review.`,
+    `Each prompt is listed with its number and its day. The days were shuffled on 15 November 2026, after the review, so a batch is spread over the year (this one from ${first} to ${last}); no theme falls on two days running.`,
     '',
   ];
   if (fromForum) {
