@@ -24,9 +24,11 @@ export interface Prompt {
   text: string;
 }
 
-/** A prompt as the bank keeps it: with the review batch it was shown to Stijn in. */
+/** A prompt as the bank keeps it: with the review batch it was shown to Stijn in, and where it came from. */
 export interface BankEntry extends Prompt {
   batch: number;
+  /** 'forum': taken from the Eurth forum's own Worldbuilding Prompts list and cut to fit the card. */
+  from?: 'forum';
 }
 
 /** One prompt for every day of a leap year. */
@@ -66,12 +68,13 @@ export function readBank(json: unknown): BankEntry[] {
   return json.map((entry: unknown, index) => {
     const where = `Entry ${index + 1} of the prompt bank`;
     if (typeof entry !== 'object' || entry === null) throw new TypeError(`${where} isn't an object.`);
-    const { n, theme, text, batch } = entry as Record<string, unknown>;
+    const { n, theme, text, batch, from } = entry as Record<string, unknown>;
     if (typeof n !== 'number' || !Number.isInteger(n)) throw new TypeError(`${where} has no whole number "n".`);
     if (!isThemeId(theme)) throw new TypeError(`${where} (prompt ${n}) has an unknown theme: ${String(theme)}.`);
     if (typeof text !== 'string') throw new TypeError(`${where} (prompt ${n}) has no text.`);
     if (typeof batch !== 'number' || !Number.isInteger(batch) || batch < 0) throw new TypeError(`${where} (prompt ${n}) has no review batch.`);
-    return { n, theme, text, batch };
+    if (from !== undefined && from !== 'forum') throw new TypeError(`${where} (prompt ${n}) comes from somewhere unknown: ${String(from)}.`);
+    return from ? { n, theme, text, batch, from } : { n, theme, text, batch };
   });
 }
 

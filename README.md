@@ -4,13 +4,14 @@
 
 Prompts gives worldbuilders one question a day about their own nation: 366 of them, one for every day of a leap year, across politics, history, culture, economy, military, geography, daily life and characters. It is one of the free worldbuilding tools by [Eurth](https://eurth.org), a worldbuilding and roleplay community since 2004, and will live at prompt.eurth.org.
 
-The site is built and checked but not live: it goes up when its door opens. The prompt bank is still being written and reviewed: 35 of 366 so far. Where work stands and what is next is in [roadmap.md](roadmap.md); the first 30 prompts, waiting for review, are in [docs/review-batch-1.md](docs/review-batch-1.md).
+The site is built and checked but not live: it goes up when its door opens. The prompt bank is still being written and reviewed: 135 of 366 so far, 100 of them from the Eurth forum's own [Worldbuilding Prompts](https://eurth.org/t/worldbuilding-prompts/17685). Where work stands and what is next is in [roadmap.md](roadmap.md); the batch waiting for review is [docs/review-batch-2.md](docs/review-batch-2.md).
 
 ## How it works
 
 - A static site built with Astro on [@eurth/style](https://style.eurth.org), the shared shell of Eurth's tools. There is no account and no server-side code, and nothing is stored: no streaks, no history.
 - Every prompt has a day. Prompts 1 to 365 are the days of an ordinary year (1 is 1 January, 365 is 31 December); 366 is 29 February. So a date has the same prompt every year, and it is the same for everyone on that day.
 - The Today page is built with the prompt for the day in Brussels, and a nightly run rebuilds it just after midnight, so it is right without JavaScript. With JavaScript it follows the visitor's own date.
+- "Answer on the Eurth forum" is a plain link that opens a new topic in Factbooks and National Information, titled with the writer's nation and the prompt. The forum allows a title only once, so the tool asks for the nation's name first.
 - Every prompt has a page of its own (`/p/348/`), plain HTML, listed in the archive and the sitemap. "Another prompt" draws at random, turns the card like a page and moves the address to that prompt's page; the theme in use rides in the query string (`?theme=economy`).
 - The logic in `src/prompts/` is plain TypeScript with no browser or framework in it. The page, the downloads, the sharing images and the tests all use the same functions.
 - Cloudflare serves the built files from `dist/` as Workers static assets on the `prompt.eurth.org` custom domain (`wrangler.jsonc`). The security headers, the service worker, the manifest, `robots.txt` and `llms.txt` are written by `@eurth/style` after the build.
@@ -34,19 +35,20 @@ The site is built and checked but not live: it goes up when its door opens. The 
 | The bank itself | `src/prompts/bank.ts`, `src/content/prompts.json` |
 | The launch gate, and which review batches are approved | `src/prompts/launch.ts`, `src/content/review.json` |
 | The guide | `src/content/guide.md` |
+| Good prompts: the seven marks and the iceberg | `src/content/craft.ts`, `src/pages/good-prompts.astro` |
+| A review batch as a page to read | `tools/review-sheet.mjs`, into `docs/` |
 | The tool: card, buttons, themes, sharing, the page turn | `src/tool/PromptTool.svelte` |
-| Pages: Today, a page per prompt, archive, guide, not found | `src/pages/` |
+| Pages: Today, a page per prompt, archive, guide, good prompts, not found | `src/pages/` |
 | Site name, address, pages in the header | `eurth.config.mjs` |
 | Icons and sharing images (one per prompt) | `tools/make-images.mjs`, into `public/` and `public/og/` |
 | Tests | `tests/` |
 
 ## Adding or changing prompts
 
-1. Edit `src/content/prompts.json`: a number, a theme, the review batch and the text.
+1. Edit `src/content/prompts.json`: a number, a theme, the review batch, the text, and `"from": "forum"` if it comes from the forum's list.
 2. Run `npm test`. The tests hold every prompt to the rules: one or two sentences, 200 characters at most, plain punctuation, British spelling, no real country, nothing magical or beyond today's technology, no theme two days running, and no two prompts that open alike or ask the same thing.
-3. Run `npm run images` (it needs Google Chrome) and commit what it writes: each prompt's sharing image carries its words, and a test fails if a prompt has changed since its picture was made.
-
-A batch counts as reviewed once its number is in `approved` in `src/content/review.json`.
+3. Write the batch up for review: `node tools/review-sheet.mjs <batch>` makes `docs/review-batch-<batch>.md`.
+4. Once Stijn has approved it, add the batch's number to `approved` in `src/content/review.json`, run `npm run images` (it needs Google Chrome) and commit what it writes. Each approved prompt's sharing image carries its words, and a test fails if a prompt has changed since its picture was made.
 
 ## Local development
 
@@ -109,6 +111,7 @@ Deploying needs the organisation secret `CLOUDFLARE_API_TOKEN`; without it the s
 ## Credits
 
 - Made by Orioni for [Eurth](https://eurth.org), a worldbuilding and roleplay community since 2004.
+- Many prompts come from the forum's [Worldbuilding Prompts](https://eurth.org/t/worldbuilding-prompts/17685) list and the [daily prompts of December 2020](https://eurth.org/t/december-2020-event-daily-worldbuilding-prompts/3695), run by Fulgistan and the staff. The iceberg on the Good prompts page follows Orioni's [Cultural Iceberg Model](https://eurth.org/t/cultural-iceberg-model/17682) topic, after Edward T. Hall.
 - Icons by [Font Awesome](https://fontawesome.com) Free (CC BY 4.0); sun and moon by [line-md](https://github.com/cyberalien/line-md) (MIT).
 - The guide's sources are listed at its foot.
 

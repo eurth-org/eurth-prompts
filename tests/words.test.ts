@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PROMPTS } from '../src/prompts/bank';
 import { altText, copyText, facts, label, shared } from '../src/prompts/describe';
-import { FORUM_NEW_TOPIC, LONGEST_LINK, forumBody, forumLink, forumTitle } from '../src/prompts/forum';
+import { FORUM_NEW_TOPIC, LONGEST_LINK, LONGEST_NATION, NATION_PLACEHOLDER, cleanNation, forumBody, forumLink, forumTitle } from '../src/prompts/forum';
 import { LOST_PROVINCE, MAX_LENGTH, find, type Prompt } from '../src/prompts/model';
 import { LONGEST_DESCRIPTION, SITE_PATHS, promptDescription, promptTitle, shorten, sitemapPaths } from '../src/prompts/pages';
 
@@ -41,19 +41,40 @@ describe('a prompt in words', () => {
     const share = shared(capital, SITE);
     expect(share.url).toBe('https://prompt.eurth.org/p/348/');
     expect(share.title).toBe(capital.text);
+    expect(shared(capital, SITE, ' Orioni ').title).toBe(`Orioni: ${capital.text}`);
     expect(share.text.startsWith(capital.text)).toBe(true);
     expect(share.forumBody).toBe(forumBody(capital, SITE));
   });
 });
 
 describe('answer on the Eurth forum', () => {
-  it('opens a new topic with the prompt as its title', () => {
-    expect(forumTitle(capital)).toBe(capital.text);
-    const link = new URL(forumLink(capital, { siteUrl: SITE }));
+  it('opens a new topic titled with the writer\'s nation, then the prompt', () => {
+    expect(forumTitle(capital, 'Orioni')).toBe(`Orioni: ${capital.text}`);
+    const link = new URL(forumLink(capital, { siteUrl: SITE, nation: 'Orioni' }));
     expect(`${link.origin}${link.pathname}`).toBe(FORUM_NEW_TOPIC);
-    expect(link.searchParams.get('title')).toBe(capital.text);
+    expect(link.searchParams.get('title')).toBe(`Orioni: ${capital.text}`);
     expect(link.searchParams.get('body')).toBe(forumBody(capital, SITE));
     expect(link.searchParams.has('category')).toBe(false);
+  });
+
+  it('gives two nations answering the same prompt two different titles', () => {
+    expect(forumTitle(capital, 'Orioni')).not.toBe(forumTitle(capital, 'Tagmatium'));
+    expect(forumTitle(capital, 'Orioni')).not.toBe(forumTitle(find(PROMPTS, 347)!, 'Orioni'));
+  });
+
+  it('leaves a placeholder to replace where no nation is named', () => {
+    expect(NATION_PLACEHOLDER).toBe('[Your nation]');
+    expect(forumTitle(capital)).toBe(`[Your nation]: ${capital.text}`);
+    expect(forumTitle(capital, '   ')).toBe(`[Your nation]: ${capital.text}`);
+  });
+
+  it('tidies the nation\'s name: one line, single spaces, 50 characters at most', () => {
+    expect(cleanNation('  The   Holy\tEmpire\nof  Orioni ')).toBe('The Holy Empire of Orioni');
+    expect(cleanNation('x'.repeat(80))).toHaveLength(LONGEST_NATION);
+    expect(cleanNation(`${'x'.repeat(49)} yz`)).toBe('x'.repeat(49));
+    expect(cleanNation('')).toBe('');
+    // With the longest name and the longest prompt, the title fits the forum's 255 characters.
+    expect(forumTitle(longest, 'x'.repeat(80)).length).toBeLessThanOrEqual(255);
   });
 
   it('quotes the prompt, says where it is from, and leaves a line to answer on', () => {
@@ -72,16 +93,17 @@ describe('answer on the Eurth forum', () => {
   it('writes spaces as %20, never as +, so the forum reads them back as spaces', () => {
     const link = forumLink(capital, { siteUrl: SITE, category: 'the pub' });
     expect(link).not.toMatch(/\+/);
-    expect(link).toContain('title=Your%20nation');
+    expect(link).toContain('title=%5BYour%20nation%5D%3A%20Your%20nation');
     expect(link).toContain('category=the%20pub');
   });
 
   it('stays a link every browser and forum will open, for every prompt and for the longest a prompt may be', () => {
     expect(longest.text).toHaveLength(MAX_LENGTH);
     for (const prompt of [...PROMPTS, LOST_PROVINCE, longest]) {
-      const link = forumLink(prompt, { siteUrl: SITE, category: 'factbooks-and-national-information' });
+      const nation = 'République fédérale & démocratique d’Übergröße';
+      const link = forumLink(prompt, { siteUrl: SITE, category: 'factbooks-and-national-information', nation });
       expect(link.length, `prompt ${prompt.n}`).toBeLessThanOrEqual(LONGEST_LINK);
-      expect(new URL(link).searchParams.get('title')).toBe(prompt.text);
+      expect(new URL(link).searchParams.get('title')).toBe(`${nation}: ${prompt.text}`);
     }
   });
 });
@@ -129,7 +151,7 @@ describe('page words', () => {
 
   it('lists every prompt page in the sitemap, after the site\'s own pages, and leaves the easter egg out', () => {
     const paths = sitemapPaths([...PROMPTS, LOST_PROVINCE]);
-    expect(paths.slice(0, SITE_PATHS.length)).toEqual(['/', '/archive/', '/guide/']);
+    expect(paths.slice(0, SITE_PATHS.length)).toEqual(['/', '/archive/', '/guide/', '/good-prompts/']);
     expect(paths).toHaveLength(SITE_PATHS.length + PROMPTS.length);
     for (const prompt of PROMPTS) expect(paths).toContain(`/p/${prompt.n}/`);
     expect(paths).not.toContain('/p/404/');
@@ -139,8 +161,8 @@ describe('page words', () => {
   it('lists all 366 once the bank is whole', () => {
     const year: Prompt[] = Array.from({ length: 366 }, (_, i) => ({ n: 366 - i, theme: 'history', text: 'x' }));
     const paths = sitemapPaths(year);
-    expect(paths).toHaveLength(369);
-    expect(paths[3]).toBe('/p/1/');
+    expect(paths).toHaveLength(370);
+    expect(paths[4]).toBe('/p/1/');
     expect(paths.at(-1)).toBe('/p/366/');
   });
 });

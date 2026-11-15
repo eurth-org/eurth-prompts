@@ -3,7 +3,7 @@
  * the Share dialog passes on, and the alternative text of its picture.
  */
 import { dateFor, formatDate, hasDate } from './calendar';
-import { forumBody } from './forum';
+import { cleanNation, forumBody, forumTitle } from './forum';
 import { promptUrl } from './link';
 import { themeName, type Prompt } from './model';
 
@@ -32,12 +32,13 @@ export function altText(prompt: Prompt, siteHost: string): string {
 
 /**
  * What the Share dialog needs (the shape @eurth/style's shareTargets takes): the link, a
- * title, a line of text, and the forum topic's body.
+ * title, a line of text, and the forum topic's body. With the writer's nation, the title
+ * carries it, as a forum topic's title must be its own.
  */
-export function shared(prompt: Prompt, siteUrl: string): { url: string; title: string; text: string; forumBody: string } {
+export function shared(prompt: Prompt, siteUrl: string, nation = ''): { url: string; title: string; text: string; forumBody: string } {
   return {
     url: promptUrl(prompt.n, siteUrl),
-    title: prompt.text,
+    title: cleanNation(nation) ? forumTitle(prompt, nation) : prompt.text,
     text: `${prompt.text} A worldbuilding prompt from Eurth: answer it for your own nation.`,
     forumBody: forumBody(prompt, siteUrl),
   };

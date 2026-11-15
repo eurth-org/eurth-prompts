@@ -65,11 +65,14 @@ describe.skipIf(!built)('the built site', () => {
     expect(plain(archive)).toContain(PROMPTS[0]!.text);
   });
 
-  it('gives "Answer on the Eurth forum" a plain link to a new topic on eurth.org', () => {
+  it('gives "Answer on the Eurth forum" a plain link to a new topic in Factbooks and National Information', () => {
     const link = /<a[^>]*href="(https:\/\/eurth\.org\/new-topic\?[^"]+)"/.exec(pageOf(348))?.[1]?.replace(/&amp;/g, '&');
     expect(link).toBeDefined();
-    expect(new URL(link!).searchParams.get('title')).toBe("Your nation's capital moved two centuries ago. Why, and who still resents it?");
-    expect(new URL(link!).searchParams.get('body')).toContain(`${site.url}/p/348/`);
+    const asked = new URL(link!).searchParams;
+    // Without JavaScript nobody has named a nation yet: the placeholder is there to replace.
+    expect(asked.get('title')).toBe("[Your nation]: Your nation's capital moved two centuries ago. Why, and who still resents it?");
+    expect(asked.get('body')).toContain(`${site.url}/p/348/`);
+    expect(asked.get('category')).toBe('factbooks-and-national-information');
   });
 
   it('serves the easter egg at /p/404/ and on the page for anything not found', () => {
@@ -80,7 +83,7 @@ describe.skipIf(!built)('the built site', () => {
 
   it('keeps the prompt pages and their pictures out of the first download for offline use', () => {
     const kept: string[] = JSON.parse(/const APP = (\[[^\]]*\]);/.exec(read('dist/sw.js'))![1]!);
-    expect(kept).toEqual(expect.arrayContaining(['/', '/archive/', '/guide/']));
+    expect(kept).toEqual(expect.arrayContaining(['/', '/archive/', '/guide/', '/good-prompts/']));
     expect(kept.filter((path) => path.startsWith('/p/') || path.startsWith('/og/'))).toEqual([]);
     // The bank travels in the script instead, so every prompt can be shown offline.
     const script = kept.find((path) => /\/_astro\/PromptTool\.[\w-]+\.js$/.test(path));

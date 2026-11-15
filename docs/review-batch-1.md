@@ -1,6 +1,6 @@
 # Review batch 1: the first 30 prompts
 
-Status: **waiting for Stijn's review** (written 14 November 2026). These set the voice for the other 336, so say what to change: too long, too dry, too leading, wrong themes, anything.
+Status: **approved by Stijn on 15 November 2026** (written 14 November 2026). These set the voice for the rest.
 
 The rules they follow: one or two sentences; a question that makes the writer decide something about their own nation; nothing about a real country; realistic geofiction (no magic, aliens or fantasy races, technology up to today); British English; 200 characters at most, so a prompt fits a forum title and the card.
 

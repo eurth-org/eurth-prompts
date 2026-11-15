@@ -21,7 +21,7 @@
   import { CARD_SIZES, card, type CardLook, type CardMark, type CardSizeId } from '../prompts/card';
   import { copyText, label, shared } from '../prompts/describe';
   import { draw } from '../prompts/draw';
-  import { forumLink } from '../prompts/forum';
+  import { LONGEST_NATION, cleanNation, forumLink } from '../prompts/forum';
   import { numberFromPath, promptPath, promptUrl, themeFromSearch, withTheme } from '../prompts/link';
   import { LOST_PROVINCE, THEMES, find, themeName, type Prompt, type ThemeId } from '../prompts/model';
   import { promptTitle } from '../prompts/pages';
@@ -62,7 +62,11 @@
   let turning = $state<'' | 'out' | 'in'>('');
   let size = $state<CardSizeId>('preview');
 
-  const sharing = $derived(shared(prompt, siteUrl));
+  // The writer's nation, for the forum topic's title. Kept in memory for this page only.
+  let nation = $state('');
+  let nationField: HTMLInputElement | undefined = $state();
+
+  const sharing = $derived(shared(prompt, siteUrl, nation));
   const earlier = $derived(isToday && date ? earlierThisMonth(PROMPTS, date) : []);
   const beside = $derived(neighbours(PROMPTS, prompt.n));
   const more = $derived(isToday ? [] : moreFromTheme(PROMPTS, prompt));
@@ -105,6 +109,14 @@
     if (id && !next && prompt.theme !== id) toast('No prompts on that theme yet. Try another, or any.');
   }
 
+  /** A forum topic's title must be its own, and the nation's name is what makes it so: ask for it first. */
+  function nameFirst(event: MouseEvent) {
+    if (cleanNation(nation)) return;
+    event.preventDefault();
+    nationField?.focus();
+    toast("Name your nation first: it goes in the topic's title, so your answer has a title of its own.");
+  }
+
   async function copyPrompt() {
     const copied = await copyToClipboard(copyText(prompt, siteUrl));
     toast(copied ? 'Prompt copied. The answer is yours to write.' : "That didn't copy. Your browser may not allow it here.");
@@ -126,6 +138,7 @@
       // Offline, the copy of the Today page stands in for a prompt's own page: show what was asked for.
       prompt = askedFor;
       isToday = false;
+      document.title = `${promptTitle(askedFor)} · ${siteName}`;
     } else if (isToday) {
       // The page was built for the day in Brussels; the visitor's own day may differ.
       date = visitorsToday();
@@ -162,8 +175,17 @@
         <p class="eu-muted">{label(prompt)}</p>
         <p class="words">{prompt.text}</p>
       </div>
+      <div class="eu-row answer">
+        <label class="eu-field">
+          <span class="eu-label">Your nation</span>
+          <input class="eu-input" bind:this={nationField} bind:value={nation} maxlength={LONGEST_NATION} autocomplete="off" aria-describedby="nation-help" />
+        </label>
+        <a class="eu-btn eu-btn--primary" href={forumLink(prompt, { siteUrl, category: forumCategory, nation })} onclick={nameFirst}>
+          <Icon icon={faComments} /> Answer on the Eurth forum
+        </a>
+      </div>
+      <p class="eu-help" id="nation-help">Its name goes in front of the prompt in your topic's title, so every answer on the forum has a title of its own.</p>
       <div class="eu-row">
-        <a class="eu-btn eu-btn--primary" href={forumLink(prompt, { siteUrl, category: forumCategory })}><Icon icon={faComments} /> Answer on the Eurth forum</a>
         <button type="button" class="eu-btn" data-click="tumble" onclick={another}><Icon icon={faShuffle} /> Another prompt</button>
         <button type="button" class="eu-btn" data-click="bounce" onclick={copyPrompt}><Icon icon={faCopy} /> Copy prompt</button>
       </div>
@@ -345,7 +367,8 @@
     font: var(--type-body);
   }
 
-  .sizes {
+  .sizes,
+  .answer {
     align-items: end;
   }
 </style>

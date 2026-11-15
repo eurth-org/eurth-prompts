@@ -17,6 +17,7 @@ export const site = defineSite({
     { href: '/', label: 'Today' },
     { href: '/archive/', label: 'Archive' },
     { href: '/guide/', label: 'Guide' },
+    { href: '/good-prompts/', label: 'Good prompts' },
   ],
   repo: 'https://github.com/eurth-org/eurth-prompts',
   ogAlt: 'Prompts, a worldbuilding prompt a day, at prompt.eurth.org: the Eurth yurt beside a card that asks a question about your nation.',

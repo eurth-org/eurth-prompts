@@ -1,7 +1,24 @@
 {
-  "approved": [0],
+  "approved": [
+    0,
+    1
+  ],
   "batches": [
-    { "id": 0, "what": "The five prompts on the mock-up, Stijn's own", "shown": null },
-    { "id": 1, "what": "The first 30, which set the voice", "shown": "2026-11-14" }
+    {
+      "id": 0,
+      "what": "The five prompts on the mock-up, Stijn's own",
+      "shown": null
+    },
+    {
+      "id": 1,
+      "what": "The first 30, which set the voice",
+      "shown": "2026-11-14",
+      "approved": "2026-11-15"
+    },
+    {
+      "id": 2,
+      "what": "The Eurth forum's own prompts, cut to fit the card",
+      "shown": "2026-11-15"
+    }
   ]
 }

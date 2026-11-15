@@ -7,7 +7,7 @@ import { promptPath } from './link';
 import { byNumber, themeName, type Prompt } from './model';
 
 /** The site's own pages, beside the prompts'. */
-export const SITE_PATHS = ['/', '/archive/', '/guide/'] as const;
+export const SITE_PATHS = ['/', '/archive/', '/guide/', '/good-prompts/'] as const;
 
 /** Text cut to a length at the end of a word, with an ellipsis if anything was cut. */
 export function shorten(text: string, most: number): string {

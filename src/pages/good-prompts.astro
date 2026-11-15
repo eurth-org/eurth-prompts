@@ -1,0 +1,202 @@
+---
+// What makes a good prompt, and a bad one: seven marks with a weak and a strong example each,
+// the cultural iceberg, and where the bank's prompts come from. The marks are data in
+// src/content/craft.ts; the strong examples are quoted from the bank as it reads today.
+import { faAnglesDown, faAnglesUp, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { article, ref, wikipedia } from '@eurth/style/build';
+import Fa from '@eurth/style/components/Fa.astro';
+import Page from '@eurth/style/components/Page.astro';
+import { site } from '../../eurth.config.mjs';
+import { ICEBERG, MARKS, UPDATED } from '../content/craft';
+import { BANK } from '../prompts/bank';
+import { formatDate } from '../prompts/calendar';
+import { label } from '../prompts/describe';
+import { promptPath } from '../prompts/link';
+import { BANK_SIZE, find } from '../prompts/model';
+
+const title = 'What makes a good worldbuilding prompt';
+const description = 'Seven marks of a good worldbuilding prompt, each with a weak example and a strong one, the cultural iceberg model, and where the prompts in this bank come from.';
+const fromForum = BANK.filter((entry) => entry.from === 'forum').length;
+const [year, month, day] = UPDATED.split('-').map(Number);
+const out = (href: string) => ref(href, site.host);
+---
+
+<Page site={site} title={title} description={description} crumbs={[{ name: 'Good prompts', path: '/good-prompts/' }]} jsonld={[article(site, { headline: title, path: '/good-prompts/', description, updated: UPDATED })]}>
+  <article class="eu-stack">
+    <header class="eu-prose">
+      <p class="eu-kicker">Good prompts</p>
+      <h1>{title}</h1>
+      <p class="eu-lead">
+        A good prompt makes you decide something you hadn't thought to decide. A bad one asks for a list. Here is the difference, in seven marks, with an example of
+        each going wrong and going right.
+      </p>
+    </header>
+
+    <section class="eu-prose" aria-labelledby="marks">
+      <h2 id="marks">Seven marks of a good prompt</h2>
+      <p>Every prompt in the <a href="/archive/">archive</a> was held against these. None of the weak examples is in the bank; all of the strong ones are.</p>
+    </section>
+
+    <ol class="marks">
+      {
+        MARKS.map((mark, index) => {
+          const strong = find(BANK, mark.strong)!;
+          return (
+            <li class="eu-card" id={mark.id}>
+              <h3>
+                {index + 1}. {mark.title}
+              </h3>
+              <p>{mark.why}</p>
+              <div class="pair">
+                <div class="example">
+                  <p class="verdict">
+                    <Fa icon={faThumbsDown} /> Weak
+                  </p>
+                  <p class="said">{mark.weak}</p>
+                  <p class="eu-muted">{mark.trouble}</p>
+                </div>
+                <div class="example">
+                  <p class="verdict">
+                    <Fa icon={faThumbsUp} /> Strong
+                  </p>
+                  <p class="said">
+                    <a href={promptPath(strong.n)}>{strong.text}</a>
+                  </p>
+                  <p class="eu-muted">
+                    {mark.gain} ({label(strong)})
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <section class="eu-prose" aria-labelledby="iceberg">
+      <h2 id="iceberg">The iceberg under every culture</h2>
+      <p>
+        In 1976 the anthropologist <a href={wikipedia('Edward T. Hall', site.host)}>Edward T. Hall</a> compared a culture to an iceberg, in his book{' '}
+        <a href={wikipedia('Beyond Culture', site.host)}><cite>Beyond Culture</cite></a>. The part a visitor sees in a week is the tip. Most of what makes a people who
+        they are lies under the water, where it takes years to learn and nobody thinks to explain it.
+      </p>
+    </section>
+
+    <div class="pair iceberg">
+      <section class="eu-card" aria-labelledby="above">
+        <h3 id="above"><Fa icon={faAnglesUp} /> Above the water</h3>
+        <p class="eu-muted">What a visitor sees in a week.</p>
+        <ul>
+          {ICEBERG.above.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+      <section class="eu-card eu-card--outline" aria-labelledby="below">
+        <h3 id="below"><Fa icon={faAnglesDown} /> Below the water</h3>
+        <p class="eu-muted">What takes years to learn.</p>
+        <ul>
+          {ICEBERG.below.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+    </div>
+
+    <section class="eu-prose">
+      <p>
+        Worldbuilding tends to stop at the tip, because the tip is easy to list: a national dish, a national dress, a flag. A nation built that way reads like a
+        tourist brochure. The fix is to start at the tip, where it is easy, and ask a question whose answer is under the water. Who cooks the national dish, and who
+        only eats it? Who may wear the dress, and who is laughed at for trying?
+      </p>
+      <p>
+        Orioni wrote the model up for worldbuilders on the Eurth forum, with the diagram:{' '}
+        <a href={out('https://eurth.org/t/cultural-iceberg-model/17682')}>Cultural Iceberg Model</a>. Worldbuilding Magazine's podcast has an episode on the same
+        idea, <a href={out('https://anchor.fm/worldcasting0/episodes/The-Iceberg-Principle-edli20')}>The Iceberg Principle</a>.
+      </p>
+    </section>
+
+    <section class="eu-prose" aria-labelledby="forum">
+      <h2 id="forum">Where these prompts come from</h2>
+      <p>
+        Eurth's members have been asking each other awkward questions about their nations for years.
+        {fromForum > 0 && <>{fromForum} of the prompts here began on the forum, and more will follow as the bank fills to {BANK_SIZE}.</>}
+        The rest were written for this site in the same spirit.
+      </p>
+      <ul>
+        <li>
+          <a href={out('https://eurth.org/t/worldbuilding-prompts/17685')}>Worldbuilding Prompts</a>, the forum's own list: some two hundred questions on geography,
+          history, politics, the economy, demographics and culture, and a last section on tying them together.
+        </li>
+        <li>
+          <a href={out('https://eurth.org/t/december-2020-event-daily-worldbuilding-prompts/3695')}>December 2020: Daily Worldbuilding Prompts</a>, when the staff
+          posted a prompt a day for a month and members answered in the thread. Weekends, pets, funerals and gambling all had their day. The answers are worth
+          reading as examples.
+        </li>
+      </ul>
+      <p>
+        The forum's prompts are longer than a card allows: many ask four questions at once, which suits a factbook written over an afternoon. Here each is cut to one
+        or two sentences, for ten minutes on one day. If a prompt leaves you wanting the rest, the full list is where to go next.
+      </p>
+    </section>
+
+    <section class="eu-prose" aria-labelledby="own">
+      <h2 id="own">Write your own</h2>
+      <ol>
+        <li>Pick something a visitor to your nation could see or touch: a bridge, a coin, a uniform, a queue.</li>
+        <li>State one thing about it as already true. Make it slightly inconvenient.</li>
+        <li>Ask one question about people: who gains, who pays, who objects, who remembers.</li>
+        <li>Cut it to two sentences, and check that a nation quite unlike yours could still answer it.</li>
+      </ol>
+      <p>
+        Then try it on someone. A prompt is good if two people give answers that could not be swapped. The <a href="/guide/">guide</a> shows how to answer one;{' '}
+        <a href="/">today's prompt</a> is waiting.
+      </p>
+      <p class="eu-muted">Last updated <time datetime={UPDATED}>{formatDate({ month: month!, day: day! })} {year}</time>.</p>
+    </section>
+  </article>
+</Page>
+
+<style>
+  .marks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* A mark reached by its link stops below the page's top edge, not under it. */
+  .marks li {
+    scroll-margin-top: var(--space-4);
+  }
+
+  h3 {
+    font: var(--type-heading);
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .example {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  /* Weak and strong are told apart by the word and the thumb, never by colour. */
+  .verdict {
+    font: var(--type-label);
+  }
+
+  .said {
+    font: var(--type-lead);
+  }
+
+  .iceberg ul {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+</style>

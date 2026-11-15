@@ -1,7 +1,7 @@
 ---
 title: How to use a worldbuilding prompt
 description: How to answer a worldbuilding prompt in ten minutes, alone or with a group, and what makes an answer worth keeping. A short guide for worldbuilders, with a worked example and sources.
-updated: 2026-11-14
+updated: 2026-11-15
 ---
 
 A prompt is a small question with a deadline. It asks you to decide one thing about your nation today, instead of everything about it someday.
@@ -12,7 +12,7 @@ Worldbuilding stalls on large blank pages. "Write the history of the country" is
 
 Every prompt here states something as already true and asks what follows from it. That is the trick. You don't have to work out whether your nation has a navy, a second city or a statue people argue about. It does, as of now, and your job is the interesting part: why, who paid, and who is still cross.
 
-The prompts are written for realistic worlds: no magic, nothing beyond today's technology, and never a real country. They ask about your nation, so two people answering the same prompt should end up somewhere different.
+The prompts are written for realistic worlds: no magic, nothing beyond today's technology, and never a real country. They ask about your nation, so two people answering the same prompt should end up somewhere different. What separates a good prompt from a bad one has a page of its own: [good prompts](/good-prompts/).
 
 ## Alone: ten minutes
 

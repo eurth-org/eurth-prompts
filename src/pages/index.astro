@@ -5,7 +5,7 @@
 // The page is built with the prompt for the day in Brussels at build time (the nightly run
 // rebuilds it just after midnight), so it reads right without JavaScript. With JavaScript, the
 // tool then follows the visitor's own date.
-import { buildTime, faqPage, webApplication } from '@eurth/style/build';
+import { buildTime, faqPage, ref, webApplication } from '@eurth/style/build';
 import Page from '@eurth/style/components/Page.astro';
 import { site } from '../../eurth.config.mjs';
 import { onOrAfter } from '../prompts/archive';
@@ -65,6 +65,10 @@ const faq = [
         another, or pick a theme. The <a href="/archive/">archive</a> has every prompt, and the <a href="/guide/">guide</a> shows how to answer one in ten minutes,
         alone or with a group.
       </p>
+      <p>
+        Many of the prompts began on the Eurth forum, where members have been asking each other these things for years. <a href="/good-prompts/">Good prompts</a>
+        says where they come from, and what separates a good prompt from a bad one.
+      </p>
 
       <h2>Questions</h2>
       <dl>
@@ -80,5 +84,8 @@ const faq = [
     </section>
   </div>
 
-  <Fragment slot="inspirations">Prompts takes after the question lists worldbuilders have long passed around, and the forum's own habit of asking each other awkward things.</Fragment>
+  <Fragment slot="inspirations">
+    Prompts grew out of the forum's own <a href={ref('https://eurth.org/t/worldbuilding-prompts/17685', site.host)}>Worldbuilding Prompts</a> and the
+    <a href={ref('https://eurth.org/t/december-2020-event-daily-worldbuilding-prompts/3695', site.host)}>daily prompts of December 2020</a>.
+  </Fragment>
 </Page>

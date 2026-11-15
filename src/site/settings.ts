@@ -5,7 +5,6 @@
 
 /**
  * The forum category a new topic opens in when someone presses "Answer on the Eurth forum":
- * its slug, a subcategory as "parent/child". Undefined until Stijn has said which; the topic
- * then opens with no category chosen.
+ * Factbooks and National Information (category 25 on eurth.org), by its slug.
  */
-export const FORUM_CATEGORY: string | undefined = undefined;
+export const FORUM_CATEGORY = 'factbooks-and-national-information';
