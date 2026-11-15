@@ -25,7 +25,8 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 **Not checked yet:**
 
 - **The page turn**, by eye, in a browser with motion on.
-- **CI on the full site.** CI's Lighthouse and axe steps passed on `main` at 141 pages. With 372 pages the axe step takes well over ten minutes: see Next.
+
+**CI on the full site** is green (15 November): the run for the shuffled bank passed, Lighthouse and axe among its steps, and so did the first nightly run. With 372 pages a CI run takes about 22 minutes, most of it the axe step: see Next.
 
 ## Decisions (say if any is wrong)
 
