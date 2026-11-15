@@ -8,32 +8,26 @@ Three parts: what comes next, what each release added (newest first), and what's
 
 A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in eurth-org/eurth-style wins on everything shared (`node_modules/@eurth/style/HANDBOOK.md`). Astro needs Node 22.23 or newer; on Stijn's machine that is the Homebrew one (`export PATH=/opt/homebrew/bin:$PATH`).
 
-**Done and pushed** (`npm run check`, `npm run build`, `npm test`: 219 tests green, the handbook's shared suites among them):
+**Done and pushed** (`npm run check`, `npm run build`, `npm test`: 219 tests green, the handbook's shared suites among them; `npm run axe`: no findings on 372 pages in both themes; `npm run launch-check`: passes):
 
 - The repo, the brief as `CLAUDE.md`, the licence, the README and the plan (approved by Stijn on 14 November 2026).
 - **The logic** in `src/prompts/`, plain TypeScript. The README's table says which file holds what.
-- **The bank is written: 366 of 366** in `src/content/prompts.json`, 192 of them from the Eurth forum's own Worldbuilding Prompts list (`"from": "forum"`), cut to fit the card. It passes every rule, the balance of themes (six with 46, two with 45) and the order of the year.
-  - Batch 0: the mock-up's five, on 10 to 14 December. Stijn's own.
-  - Batch 1: 30 prompts, 22 December to 20 January. **Approved** by Stijn on 15 November 2026.
-  - Batch 2: 100 prompts, 21 January to 30 April, all from the forum. **Approved** by Stijn on 15 November 2026.
-  - Batch 3: 100 prompts, 1 May to 8 August (78 forum, 22 new). **Waiting for review:** [docs/review-batch-3.md](docs/review-batch-3.md).
-  - Batch 4: 100 prompts, 9 August to 16 November (13 forum, 87 new). **Waiting for review:** [docs/review-batch-4.md](docs/review-batch-4.md).
-  - Batch 5: the last 31, 17 November to 9 December, 15 to 21 December and the leap day (1 forum, 30 new). **Waiting for review:** [docs/review-batch-5.md](docs/review-batch-5.md).
+- **The bank: 366 of 366, all reviewed and approved by Stijn** (15 November 2026), in `src/content/prompts.json`. 192 come from the Eurth forum's own Worldbuilding Prompts list (`"from": "forum"`), cut to fit the card; 5 are the mock-up's; 169 were written for the site. The review sheets are `docs/review-batch-1.md` to `-5.md`.
 - **The guide** (`src/content/guide.md`) and **Good prompts** (`src/content/craft.ts`, `src/pages/good-prompts.astro`): seven marks of a good prompt with a weak and a strong example each, the cultural iceberg model with Orioni's forum topic, and where the prompts come from.
-- **The site**, from @eurth/style 1.0.0's starter template: Today, a page per prompt (and `/p/404/`), Archive, Guide, Good prompts and the not-found page, 372 pages in all; the prompt tool with Answer on the Eurth forum, Another prompt and its page turn, Copy prompt, the theme buttons, Earlier this month, previous and next, the share row and dialog, and the card as SVG, PNG or WebP in six sizes; a sharing image for each approved prompt (136 so far); the three workflows, with the launch set for 22 December.
+- **The site**, from @eurth/style 1.0.0's starter template: Today, a page per prompt (and `/p/404/`), Archive, Guide, Good prompts and the not-found page, 372 pages in all, every prompt page in the sitemap; the prompt tool with Answer on the Eurth forum, Another prompt and its page turn, Copy prompt, the theme buttons, Earlier this month, previous and next, the share row and dialog, and the card as SVG, PNG or WebP in six sizes; a sharing image for every prompt (`public/og/`, 22 MB); the three workflows, with the launch set for 22 December.
 - **Answer on the Eurth forum** opens a new topic in Factbooks and National Information (category 25), titled "<Nation>: <prompt>". The forum allows a title only once, so the tool asks for the nation's name first; it is kept in memory for the page only.
-- **The launch gate** closes by itself: from the door's time on (and so in the launch workflow, which builds for that time), `npm test` fails unless all 366 prompts are written, sound, in order, in approved batches, and each has its sharing image. `npm run launch-check` asks at any time; today it names only batches 3 to 5 and their pictures.
+- **The launch gate** is part of `npm test` from the door's time on (and so in the launch workflow, which builds for that time): all 366 prompts written, sound, in order, in approved batches, each with its sharing image. Rehearsed on 15 November with `EURTH_BUILD_TIME=2026-12-22T00:00:00+01:00`: the build and all tests pass, and the Today page shows prompt 356.
 - **Checked in real Chrome** (15 November): the service worker installs and keeps 21 files; offline, Today, the archive and Good prompts open, a prompt's own address shows that prompt, and Another prompt still draws; nothing is stored.
 - **Settled with Stijn on 15 November:** the guide's invented names (Tesmar, Port Halden, Orrin) stand; "world" is spelt the ordinary way; the site has no glossary and no profile buttons, and its start page's title drops the pattern's "maker". Good prompts stands where templates or examples would.
 
 **Waiting on Stijn:**
 
-- **Review batches 3, 4 and 5** (231 prompts; the sheets are linked above). For each approved batch: apply any changes to `src/content/prompts.json`, add its number to `approved` in `src/content/review.json`, run `node tools/review-sheet.mjs <n>` and `npm run images`, and commit. Once all three are in, `npm run launch-check` must pass.
+- **Whether to shuffle the days** (Next, item 2). It has to be decided before launch.
 
 **Not checked yet:**
 
 - **The page turn**, by eye, in a browser with motion on.
-- **Lighthouse and axe on all 372 pages.** CI's Lighthouse and axe steps passed on `main` when the site had 141 pages (`npm run axe` found nothing then). With every prompt's page in, axe has 372 pages to read in two themes and takes well over ten minutes: see Next.
+- **CI on the full site.** CI's Lighthouse and axe steps passed on `main` at 141 pages. With 372 pages the axe step takes well over ten minutes: see Next.
 
 ## Decisions (say if any is wrong)
 
@@ -54,12 +48,16 @@ A new session starts here. Read `CLAUDE.md` (the brief) first; the handbook in e
 
 In order:
 
-1. **Review of batches 3, 4 and 5**, then their sharing images (`npm run images`).
-2. **Sharing images at full size.** Each is about 60 kB as Chrome saves it, so 367 of them come to about 22 MB in the repository (136 are in: 8 MB). If that is too much, save them with fewer colours (the card has five) before committing the rest.
-3. **The accessibility check takes long** now that there are 372 pages: `eurth-axe` reads every one in both themes. The prompt pages differ only in their words, so ask Foundations for a way to check a sample of a set of like pages (a change to @eurth/style, not to this repository's workflows).
-4. **The order of the days.** The themes run in turn from 21 January on (politics, history, culture, economy, military, geography, daily life, characters), which keeps the rules about order true by construction. The days can be shuffled before launch, while no address is public yet; after launch a prompt's number is its address and must not move.
-5. **The page turn by eye**, with motion on; fix what turns up.
-6. **Launch:** 21 December 2026, 22:30 UTC, by the launch workflow. If it hasn't started by 22:45 UTC, start it by hand. Afterwards: delete `.github/workflows/launch.yml`, submit the sitemap in Search Console, add Prompts to status.eurth.org, and write the release's section below.
+1. **The page turn by eye**, with motion on; fix what turns up.
+2. **The order of the days.** The themes run in turn from 21 January to 9 December (politics, history, culture, economy, military, geography, daily life, characters), which keeps the rules about order true by construction but means the same theme every eighth day. The days can be shuffled before launch, while no address is public yet; after launch a prompt's number is its address and must not move. A shuffle changes numbers, so run `npm run images` after it (every picture carries its date and number) and `npm run launch-check`.
+3. **The accessibility check takes long** with 372 pages: `eurth-axe` reads every one in both themes. The prompt pages differ only in their words, so ask Foundations for a way to check a sample of a set of like pages (a change to @eurth/style, not to this repository's workflows).
+4. **The sharing images weigh 22 MB** in the repository. If that becomes a nuisance, save them with fewer colours (the card has five).
+5. **Launch:** 21 December 2026, 22:30 UTC, by the launch workflow. If it hasn't started by 22:45 UTC, start it by hand. It needs the organisation's `CLOUDFLARE_API_TOKEN`. Afterwards: delete `.github/workflows/launch.yml`, submit the sitemap in Search Console, add Prompts to status.eurth.org, tag 1.0.0 and write the release's section below.
+
+### After launch
+
+- New prompts can replace old ones, but a number keeps its day: change the words, never the address.
+- A glossary, if the forum asks for one.
 
 ### Done when
 

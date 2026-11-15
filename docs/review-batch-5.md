@@ -1,6 +1,6 @@
 # Review batch 5: 31 prompts
 
-Status: **waiting for Stijn's review** (shown 15 November 2026). The last 31, with the leap day's prompt: 1 from the Eurth forum's list, 30 new.
+Status: **approved by Stijn** (shown 15 November 2026). The last 31, with the leap day's prompt: 1 from the Eurth forum's list, 30 new.
 
 They sit on 29 February to 21 December, the themes in turn, so no theme falls on two days running. Dates and numbers may still move before launch; the words are what to review.
 

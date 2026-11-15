@@ -1,6 +1,6 @@
 # Review batch 4: 100 prompts
 
-Status: **waiting for Stijn's review** (shown 15 November 2026). 100 prompts: 13 from the Eurth forum's list, 87 new in the voice of batch 1.
+Status: **approved by Stijn** (shown 15 November 2026). 100 prompts: 13 from the Eurth forum's list, 87 new in the voice of batch 1.
 
 They sit on 9 August to 16 November, the themes in turn, so no theme falls on two days running. Dates and numbers may still move before launch; the words are what to review.
 
