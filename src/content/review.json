@@ -1,7 +1,8 @@
 {
   "approved": [
     0,
-    1
+    1,
+    2
   ],
   "batches": [
     {
@@ -18,6 +19,22 @@
     {
       "id": 2,
       "what": "The Eurth forum's own prompts, cut to fit the card",
+      "shown": "2026-11-15",
+      "approved": "2026-11-15"
+    },
+    {
+      "id": 3,
+      "what": "100 prompts: 78 more from the Eurth forum's list, 22 new in the voice of batch 1",
+      "shown": "2026-11-15"
+    },
+    {
+      "id": 4,
+      "what": "100 prompts: 13 from the Eurth forum's list, 87 new in the voice of batch 1",
+      "shown": "2026-11-15"
+    },
+    {
+      "id": 5,
+      "what": "The last 31, with the leap day's prompt: 1 from the Eurth forum's list, 30 new",
       "shown": "2026-11-15"
     }
   ]

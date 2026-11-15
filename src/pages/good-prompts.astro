@@ -12,7 +12,7 @@ import { BANK } from '../prompts/bank';
 import { formatDate } from '../prompts/calendar';
 import { label } from '../prompts/describe';
 import { promptPath } from '../prompts/link';
-import { BANK_SIZE, find } from '../prompts/model';
+import { find } from '../prompts/model';
 
 const title = 'What makes a good worldbuilding prompt';
 const description = 'Seven marks of a good worldbuilding prompt, each with a weak example and a strong one, the cultural iceberg model, and where the prompts in this bank come from.';
@@ -116,8 +116,7 @@ const out = (href: string) => ref(href, site.host);
       <h2 id="forum">Where these prompts come from</h2>
       <p>
         Eurth's members have been asking each other awkward questions about their nations for years.
-        {fromForum > 0 && <>{fromForum} of the prompts here began on the forum, and more will follow as the bank fills to {BANK_SIZE}.</>}
-        The rest were written for this site in the same spirit.
+        {fromForum} of the {BANK.length} prompts here began on the forum. The rest were written for this site in the same spirit.
       </p>
       <ul>
         <li>

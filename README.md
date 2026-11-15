@@ -4,7 +4,7 @@
 
 Prompts gives worldbuilders one question a day about their own nation: 366 of them, one for every day of a leap year, across politics, history, culture, economy, military, geography, daily life and characters. It is one of the free worldbuilding tools by [Eurth](https://eurth.org), a worldbuilding and roleplay community since 2004, and will live at prompt.eurth.org.
 
-The site is built and checked but not live: it goes up when its door opens. The prompt bank is still being written and reviewed: 135 of 366 so far, 100 of them from the Eurth forum's own [Worldbuilding Prompts](https://eurth.org/t/worldbuilding-prompts/17685). Where work stands and what is next is in [roadmap.md](roadmap.md); the batch waiting for review is [docs/review-batch-2.md](docs/review-batch-2.md).
+The site is built and checked but not live: it goes up when its door opens. All 366 prompts are written, 192 of them from the Eurth forum's own [Worldbuilding Prompts](https://eurth.org/t/worldbuilding-prompts/17685); 135 are reviewed and the rest wait for review ([batch 3](docs/review-batch-3.md), [batch 4](docs/review-batch-4.md), [batch 5](docs/review-batch-5.md)). Where work stands and what is next is in [roadmap.md](roadmap.md).
 
 ## How it works
 

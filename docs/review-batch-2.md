@@ -1,6 +1,6 @@
 # Review batch 2: 100 prompts
 
-Status: **waiting for Stijn's review** (shown 15 November 2026). The Eurth forum's own prompts, cut to fit the card.
+Status: **approved by Stijn** (shown 15 November 2026). The Eurth forum's own prompts, cut to fit the card.
 
 They sit on 21 January to 30 April, the themes in turn, so no theme falls on two days running. Dates and numbers may still move before launch; the words are what to review.
 
