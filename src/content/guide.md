@@ -1,10 +1,9 @@
 ---
 title: How to use a worldbuilding prompt
 description: How to answer a worldbuilding prompt in ten minutes, alone or with a group, and what makes an answer worth keeping. A short guide for worldbuilders, with a worked example and sources.
-updated: 2026-11-15
+lead: A prompt is a small question with a deadline. It asks you to decide one thing about your nation today, instead of everything about it someday.
+updated: 2026-11-22
 ---
-
-A prompt is a small question with a deadline. It asks you to decide one thing about your nation today, instead of everything about it someday.
 
 ## What a prompt is for
 
@@ -25,6 +24,8 @@ The prompts are written for realistic worlds: no magic, nothing beyond today's t
 ### A worked example
 
 The prompt for 14 December is [prompt 348](/p/348/): "Your nation's capital moved two centuries ago. Why, and who still resents it?"
+
+<!-- figure: worked -->
 
 A ten-minute answer, for an invented country:
 
@@ -57,6 +58,8 @@ Your nation has no coast and the prompt is about the navy. Three ways out:
 - **Answer the absence.** Why is there no navy? Was there ever one? A missing thing is a decision too, and often a better story.
 - **Bend it.** Swap the navy for the river police, the capital for the largest port, the monarch for the party chairman. Keep the question, change the noun.
 - **Take another.** Press "Another prompt", or pick a theme. There are no streaks to break and nothing is recorded, so skipping a day costs nothing.
+
+<!-- figure: bend -->
 
 ## From an answer to canon
 

@@ -100,6 +100,78 @@ describe.skipIf(!built)('the built site', () => {
   });
 });
 
+describe('the tool\'s own mark', () => {
+  const mark = read('src/assets/mark.svg');
+
+  it('carries the Eurth yurt exactly as the suite draws it: never redrawn', () => {
+    const yurt = read('node_modules/@eurth/style/src/assets/eurth-yurt.svg');
+    const paths = [...yurt.matchAll(/<path d="([^"]+)"/g)].map((match) => match[1]!);
+    expect(paths).toHaveLength(2);
+    for (const path of paths) expect(mark).toContain(`d="${path}"`);
+    // Placed and sized as a whole, by one scale for both directions: never stretched.
+    expect(mark).toMatch(/scale\(0\.\d+\) translate\(-128\.6 -128\.6\)/);
+  });
+
+  it('is square, flat and in the suite\'s colours', () => {
+    expect(mark).toContain('viewBox="0 0 64 64"');
+    expect(mark).not.toMatch(/gradient|filter|<text|<image/i);
+    const colours = new Set([...mark.matchAll(/fill="(#[0-9a-f]+)"/gi)].map((match) => match[1]!.toLowerCase()));
+    expect([...colours].sort()).toEqual(['#1b6fa0', '#2698d4', '#fcf6e1', '#fff']);
+  });
+
+  it('is the favicon', () => {
+    if (has('public/favicon.svg')) expect(read('public/favicon.svg')).toBe(mark);
+  });
+
+  it.skipIf(!built)('stands in front of the name on every kind of page', () => {
+    const leaf = /<path d="(M14 8h36[^"]+)"/.exec(mark)![1]!;
+    for (const page of ['dist/index.html', 'dist/archive/index.html', 'dist/guide/index.html', 'dist/good-prompts/index.html', 'dist/p/348/index.html', 'dist/p/404/index.html', 'dist/404.html']) {
+      expect(read(page), page).toContain(leaf);
+    }
+  });
+});
+
+describe.skipIf(!built)('the pages built from the suite\'s shared parts', () => {
+  const count = (html: string, piece: string) => html.split(piece).length - 1;
+  const pictures = (html: string) => [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]);
+
+  it('lets a prompt leave in two cards, with the picture\'s downloads beside the picture', () => {
+    const text = plain(pageOf(348));
+    for (const words of ['Another prompt', 'Copy prompt', 'Pick a theme', 'The card as a picture', 'Download as', 'Save & share', 'Copy link', 'Copy Markdown', 'Export', 'Wikitext', 'Plain text']) {
+      expect(text, words).toContain(words);
+    }
+    // The Markdown is there to read and select before any script runs.
+    expect(pageOf(348)).toContain('## Prompt 348');
+  });
+
+  it('shows what the written pages explain, each picture with words of its own', () => {
+    const guide = read('dist/guide/index.html');
+    const good = read('dist/good-prompts/index.html');
+    const archive = read('dist/archive/index.html');
+    expect(count(guide, 'class="eu-figure"')).toBe(3);
+    expect(count(good, 'class="eu-figure"')).toBe(14);
+    expect(count(good, 'class="eu-verdict eu-verdict--bad"')).toBe(7);
+    expect(count(good, 'class="eu-verdict eu-verdict--good"')).toBe(7);
+    expect(count(archive, 'class="eu-tile"')).toBe(8);
+    for (const html of [guide, good, archive]) {
+      expect(html).toContain('eu-pagehead');
+      expect(pictures(html).length).toBeGreaterThanOrEqual(4);
+      for (const picture of pictures(html)) expect(picture).toMatch(/alt="[^"]{20,}"/);
+    }
+    for (const html of [guide, good]) {
+      expect(html).toContain('eu-toc');
+      expect(html).toContain('eu-next');
+      expect(html).not.toContain('figure:');
+    }
+  });
+
+  it('gives every page in the header an icon, for the phone', () => {
+    const bar = /<nav[^>]*>[\s\S]*?<\/nav>/.exec(read('dist/index.html'))![0];
+    for (const page of site.pages) expect(page.icon ?? ['/', '/guide/'].includes(page.href), page.label).toBeTruthy();
+    expect(bar).toContain('Good prompts');
+  });
+});
+
 describe('the prompts\' sharing images', () => {
   const made: Record<string, string> = has('tools/og-made.json') ? JSON.parse(read('tools/og-made.json')) : {};
 

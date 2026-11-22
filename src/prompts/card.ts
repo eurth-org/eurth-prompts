@@ -41,10 +41,10 @@ export interface CardLook {
   fontFamily: string;
 }
 
-/** A small picture to stand before the site's name: the Eurth yurt, from @eurth/style. */
+/** A small picture to stand before the site's name: the tool's own mark, a calendar leaf carrying the Eurth yurt. */
 export interface CardMark {
   viewBox: string;
-  /** What goes inside the <svg> element. Trusted markup: it comes from the package, never from a visitor. */
+  /** What goes inside the <svg> element. Trusted markup: it comes from the site's own file, never from a visitor. */
   body: string;
 }
 
@@ -56,6 +56,11 @@ export interface CardOptions {
   /** "prompt.eurth.org" */
   siteHost: string;
   mark?: CardMark | undefined;
+  /**
+   * The line above the prompt, where it isn't the prompt's own ("14 December · History ·
+   * prompt 348"): for a card that shows an example which is in nobody's bank.
+   */
+  label?: string | undefined;
   /** The width of a run of text at a font size, in pixels. Defaults to the table below. */
   measure?: ((text: string, fontSize: number) => number) | undefined;
 }
@@ -174,7 +179,7 @@ export function balance(text: string, lineCount: number, most: number, fontSize:
   return lines;
 }
 
-/** The yurt's size beside the site's name, and the room it takes with its gap. */
+/** The mark's size beside the site's name, and the room it takes with its gap. */
 const footerMarkSize = (smallSize: number) => Math.round(smallSize * 1.6);
 const footerMarkSpace = (smallSize: number) => footerMarkSize(smallSize) + Math.round(smallSize * 0.5);
 
@@ -190,7 +195,7 @@ function sizeOf(size: CardSize | CardSizeId): CardSize {
  * size that reads well on a phone), in lines of even length, in the middle of the space
  * between the line above and the line below.
  */
-export function cardLayout(prompt: Prompt, options: Pick<CardOptions, 'size' | 'measure' | 'siteName' | 'siteHost' | 'mark'>): CardLayout {
+export function cardLayout(prompt: Prompt, options: Pick<CardOptions, 'size' | 'measure' | 'siteName' | 'siteHost' | 'mark' | 'label'>): CardLayout {
   const { width, height } = sizeOf(options.size);
   const measure = options.measure ?? estimateWidth;
   const short = Math.min(width, height);
@@ -204,7 +209,7 @@ export function cardLayout(prompt: Prompt, options: Pick<CardOptions, 'size' | '
   let smallSize = Math.round(short * 0.042);
   const smallFits = (size: number) => {
     const name = (options.mark ? footerMarkSpace(size) : 0) + measure(`${options.siteName} by Eurth`, size);
-    return measure(label(prompt), size) <= textWidth && name + size + measure(options.siteHost, size) <= textWidth;
+    return measure(options.label ?? label(prompt), size) <= textWidth && name + size + measure(options.siteHost, size) <= textWidth;
   };
   while (smallSize > Math.round(short * 0.026) && !smallFits(smallSize)) smallSize -= 1;
   const labelY = margin + padding + smallSize;
@@ -273,6 +278,7 @@ export function card(prompt: Prompt, options: CardOptions): string {
   const right = width - textLeft;
   const markSize = footerMarkSize(smallSize);
   const nameLeft = mark ? textLeft + footerMarkSpace(smallSize) : textLeft;
+  const above = options.label ?? label(prompt);
 
   const lines = layout.lines
     .map((line, index) => `<tspan x="${textLeft}" y="${firstLineY + index * lineHeight}">${escapeXml(line)}</tspan>`)
@@ -283,11 +289,11 @@ export function card(prompt: Prompt, options: CardOptions): string {
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="${id}-title ${id}-desc">`,
-    `<title id="${id}-title">${escapeXml(`${siteName}: ${label(prompt)}`)}</title>`,
+    `<title id="${id}-title">${escapeXml(`${siteName}: ${above}`)}</title>`,
     `<desc id="${id}-desc">${escapeXml(prompt.text)}</desc>`,
     `<rect width="${width}" height="${height}" fill="${escapeXml(look.ground)}"/>`,
     `<rect x="${margin}" y="${margin}" width="${width - 2 * margin}" height="${height - 2 * margin}" rx="${radius}" fill="${escapeXml(look.card)}"/>`,
-    `<text x="${textLeft}" y="${labelY}" font-family="${font}" font-size="${smallSize}" fill="${escapeXml(look.muted)}">${escapeXml(label(prompt))}</text>`,
+    `<text x="${textLeft}" y="${labelY}" font-family="${font}" font-size="${smallSize}" fill="${escapeXml(look.muted)}">${escapeXml(above)}</text>`,
     `<text font-family="${font}" font-size="${fontSize}" font-weight="700" fill="${escapeXml(look.ink)}">${lines}</text>`,
     picture,
     `<text x="${nameLeft}" y="${footerY}" font-family="${font}" font-size="${smallSize}" fill="${escapeXml(look.muted)}"><tspan font-weight="700" fill="${escapeXml(look.ink)}">${escapeXml(siteName)}</tspan> by Eurth</text>`,

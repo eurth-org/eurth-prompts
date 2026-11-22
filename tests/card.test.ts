@@ -167,7 +167,14 @@ describe('drawing the card', () => {
     expect(card(LOST_PROVINCE, options('preview'))).toContain('id="prompt-404-preview-title"');
   });
 
-  it('places the yurt before the site\'s name when given it', () => {
+  it('carries another line above the prompt when given one, in place of the prompt\'s own', () => {
+    const example = card({ n: 0, theme: 'culture', text: 'What is your national dish?' }, options('preview', { label: 'A weak prompt' }));
+    expect(example).toContain('>A weak prompt</text>');
+    expect(example).toContain('<title id="prompt-0-preview-title">Prompts: A weak prompt</title>');
+    expect(example).not.toContain('prompt 0<');
+  });
+
+  it('places the mark before the site\'s name when given it', () => {
     const withMark = card(capital, options('preview', { mark: yurt }));
     expect(withMark).toContain('viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16"/></svg>');
     const nameX = (text: string) => Number(/<text x="(\d+)"[^>]*><tspan font-weight="700"/.exec(text)?.[1]);

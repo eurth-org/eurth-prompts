@@ -1,24 +1,86 @@
 ---
 // The guide: how to use a prompt, alone or with a group, with sources and the day it was last
-// brought up to date. The words live in src/content/guide.md, where a test keeps them honest.
+// brought up to date. The words live in src/content/guide.md, where a test keeps them honest;
+// a line there such as "<!-- figure: worked -->" marks where this page puts a picture. The
+// pictures are prompt cards, drawn at build time by the same code as the tool.
 import { article } from '@eurth/style/build';
+import Figure from '@eurth/style/components/Figure.astro';
+import Line from '@eurth/style/components/Line.astro';
+import Note from '@eurth/style/components/Note.astro';
 import Page from '@eurth/style/components/Page.astro';
+import PageHead from '@eurth/style/components/PageHead.astro';
+import Toc from '@eurth/style/components/Toc.astro';
+import { lineArrowRight } from '@eurth/style/line';
 import { site } from '../../eurth.config.mjs';
-import { Content, frontmatter } from '../content/guide.md';
-import { formatDate } from '../prompts/calendar';
+import mark from '../assets/mark.svg?raw';
+import { compiledContent, frontmatter, getHeadings } from '../content/guide.md';
+import { PROMPTS } from '../prompts/bank';
+import { altText } from '../prompts/describe';
+import { promptPath } from '../prompts/link';
+import { find, type Prompt } from '../prompts/model';
+import { BENT, FIGURES, WORKED, splitAtFigures } from '../site/guide';
+import { cardPicture } from '../site/picture';
 
-const { title, description } = frontmatter;
+const { title, description, lead } = frontmatter;
 // The front matter's date arrives as text or as a date, depending on how it was written.
 const updated = new Date(frontmatter.updated).toISOString().slice(0, 10);
-const [year, month, day] = updated.split('-').map(Number);
+
+const worked = find(PROMPTS, WORKED)!;
+const asWritten = find(PROMPTS, BENT.n)!;
+const bent: Prompt = { ...asWritten, text: BENT.text };
+const parts = splitAtFigures(await compiledContent(), FIGURES);
+const sections = getHeadings()
+  .filter((heading) => heading.depth === 2)
+  .map((heading) => ({ id: heading.slug, label: heading.text }));
 ---
 
 <Page site={site} title={title} description={description} crumbs={[{ name: 'Guide', path: '/guide/' }]} jsonld={[article(site, { headline: title, path: '/guide/', description, updated })]}>
-  <article class="eu-prose">
-    <p class="eu-kicker">Guide</p>
-    <h1>{title}</h1>
-    <Content />
-    <p class="eu-muted">Last updated <time datetime={updated}>{formatDate({ month: month!, day: day! })} {year}</time>.</p>
-    <p><a class="eu-btn eu-btn--primary" href="/">Today's prompt</a> <a class="eu-btn" href="/archive/">Every prompt</a></p>
-  </article>
+  <Fragment slot="mark" set:html={mark} />
+  <PageHead site={site} kicker="Guide" title={title} lead={lead} updated={updated}>
+    <a slot="art" href={promptPath(worked.n)}><img src={cardPicture(worked, site)} alt={altText(worked, site.host)} width="1200" height="630" /></a>
+  </PageHead>
+
+  <div class="eu-article">
+    <article class="eu-prose">
+      {
+        parts.map((part) =>
+          'html' in part ? (
+            <Fragment set:html={part.html} />
+          ) : part.figure === 'worked' ? (
+            <Figure caption="Prompt 348 on its card, as it reads every 14 December.">
+              <a href={promptPath(worked.n)}>
+                <img src={cardPicture(worked, site)} alt={altText(worked, site.host)} width="1200" height="630" loading="lazy" />
+              </a>
+            </Figure>
+          ) : (
+            <>
+              <div class="eu-figures">
+                <Figure caption="As written: a prompt for a nation with a coast.">
+                  <a href={promptPath(asWritten.n)}>
+                    <img src={cardPicture(asWritten, site)} alt={altText(asWritten, site.host)} width="1200" height="630" loading="lazy" />
+                  </a>
+                </Figure>
+                <Figure caption="Bent for a nation without one: the same question, another noun.">
+                  <img src={cardPicture(bent, site, { label: BENT.label })} alt={`The same prompt, bent: "${bent.text}"`} width="1200" height="630" loading="lazy" />
+                </Figure>
+              </div>
+              <Note>The pictures of prompts on this page open the prompt itself, where you can answer it, copy it or take the card as a picture.</Note>
+            </>
+          ),
+        )
+      }
+    </article>
+    <Toc items={sections} />
+  </div>
+
+  <div class="eu-next">
+    <div class="eu-next-words">
+      <h2>Try it</h2>
+      <p>
+        Ten minutes, one decision. Start with today's prompt, or pick one from the <a href="/archive/">archive</a>. What separates a good prompt from a bad one is
+        on <a href="/good-prompts/">Good prompts</a>.
+      </p>
+    </div>
+    <a class="eu-btn eu-btn--primary" href="/">Today's prompt <Line icon={lineArrowRight} /></a>
+  </div>
 </Page>

@@ -1,13 +1,20 @@
 ---
 // The archive: every prompt, by theme, each a link to its own page. Plain HTML, so it reads
-// without JavaScript and search engines can follow it to all 366.
+// without JavaScript and search engines can follow it to all 366. It opens with a tile per
+// theme, picture first: the theme's first prompt of the year on its card.
+import Line from '@eurth/style/components/Line.astro';
 import Page from '@eurth/style/components/Page.astro';
+import PageHead from '@eurth/style/components/PageHead.astro';
+import { lineArrowSmallDown } from '@eurth/style/line';
 import { site } from '../../eurth.config.mjs';
+import mark from '../assets/mark.svg?raw';
 import { byTheme } from '../prompts/archive';
 import { PROMPTS } from '../prompts/bank';
 import { dateFor, formatDate } from '../prompts/calendar';
+import { altText } from '../prompts/describe';
 import { promptPath, promptUrl } from '../prompts/link';
-import { BANK_SIZE } from '../prompts/model';
+import { BANK_SIZE, byNumber } from '../prompts/model';
+import { cardPicture } from '../site/picture';
 
 const themes = byTheme(PROMPTS).filter((theme) => theme.prompts.length > 0);
 const description = `Every worldbuilding prompt in the bank, ${BANK_SIZE} of them, sorted by theme: politics, history, culture, economy, military, geography, daily life and characters. Each has its own page.`;
@@ -21,18 +28,38 @@ const list = {
 ---
 
 <Page site={site} title="Every prompt, by theme" description={description} crumbs={[{ name: 'Archive', path: '/archive/' }]} jsonld={[list]}>
-  <div class="eu-stack">
-    <header class="eu-prose">
-      <p class="eu-kicker">Archive</p>
-      <h1>Every prompt, by theme</h1>
-      <p class="eu-lead">
-        All the prompts, each on the day it belongs to. Pick one and answer it for your own nation. The <a href="/guide/">guide</a> shows how.
-      </p>
-    </header>
+  <Fragment slot="mark" set:html={mark} />
+  <PageHead site={site} kicker="Archive" title="Every prompt, by theme">
+    <Fragment slot="lead">
+      All {PROMPTS.length} prompts, each on the day it belongs to. Pick one and answer it for your own nation. The <a href="/guide/">guide</a> shows how.
+    </Fragment>
+  </PageHead>
 
-    <nav class="eu-row" aria-label="Themes">
-      {themes.map((theme) => <a class="eu-btn" href={`#${theme.id}`}>{theme.name}</a>)}
-    </nav>
+  <div class="eu-stack">
+    <h2 class="eu-visually-hidden">The themes</h2>
+    <ul class="eu-gallery">
+      {
+        themes.map((theme) => {
+          const first = byNumber(theme.prompts)[0]!;
+          return (
+            <li>
+              <a class="eu-tile" href={`#${theme.id}`}>
+                <div class="eu-tile-art">
+                  <img src={cardPicture(first, site)} alt={altText(first, site.host)} width="1200" height="630" loading="lazy" />
+                </div>
+                <div class="eu-tile-words">
+                  <h3>{theme.name}</h3>
+                  <p>{theme.prompts.length} prompts</p>
+                  <span class="eu-tile-go">
+                    Read them <Line icon={lineArrowSmallDown} />
+                  </span>
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
 
     {
       themes.map((theme) => (

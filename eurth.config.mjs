@@ -3,6 +3,7 @@
 // <script>: it pulls in the list of every Eurth tool, and browser code must not carry that
 // (HANDBOOK.md, Launch). Hand the component what it needs as props instead.
 import { defineSite } from '@eurth/style/build';
+import { lineCalendar, lineConfirmCircle, lineList } from '@eurth/style/line';
 
 export const site = defineSite({
   // The subdomain, and the tool's id in @eurth/style's tools.json.
@@ -14,13 +15,14 @@ export const site = defineSite({
     'A free worldbuilding prompt every day: one question about your own nation, on politics, history, culture, economy, military, geography, daily life or characters. No account needed.',
   tagline: 'A worldbuilding prompt a day',
   pages: [
-    { href: '/', label: 'Today' },
-    { href: '/archive/', label: 'Archive' },
+    // Each page has an icon: on a phone the pages you're not on show only that.
+    { href: '/', label: 'Today', icon: lineCalendar },
+    { href: '/archive/', label: 'Archive', icon: lineList },
     { href: '/guide/', label: 'Guide' },
-    { href: '/good-prompts/', label: 'Good prompts' },
+    { href: '/good-prompts/', label: 'Good prompts', icon: lineConfirmCircle },
   ],
   repo: 'https://github.com/eurth-org/eurth-prompts',
-  ogAlt: 'Prompts, a worldbuilding prompt a day, at prompt.eurth.org: the Eurth yurt beside a card that asks a question about your nation.',
+  ogAlt: 'Prompts, a worldbuilding prompt a day, at prompt.eurth.org: a calendar leaf carrying the Eurth yurt, beside a card that asks a question about your nation.',
   category: 'EducationalApplication',
   llms: `## The prompts
 

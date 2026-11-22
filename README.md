@@ -13,6 +13,9 @@ The site is built and checked but not live: it goes up when its door opens. All 
 - The Today page is built with the prompt for the day in Brussels, and a nightly run rebuilds it just after midnight, so it is right without JavaScript. With JavaScript it follows the visitor's own date.
 - "Answer on the Eurth forum" is a plain link that opens a new topic in Factbooks and National Information, titled with the writer's nation and the prompt. The forum allows a title only once, so the tool asks for the nation's name first.
 - Every prompt has a page of its own (`/p/348/`), plain HTML, listed in the archive and the sitemap. "Another prompt" draws at random, turns the card like a page and moves the address to that prompt's page; the theme in use rides in the query string (`?theme=economy`).
+- A prompt leaves in two cards, as the handbook asks: "Save & share" (the link, the share window, the card as a picture, Copy Markdown) and "Export" (the prompt as Markdown, as wikitext for IIWiki, or as plain text). The card as a picture downloads as SVG, PNG or WebP in six sizes.
+- The tool's own mark is a tear-off calendar leaf carrying the Eurth yurt (`src/assets/mark.svg`): in the header, as the favicon and home-screen icon, and on every sharing image.
+- The guide, Good prompts and the archive show what they explain with prompt cards, drawn at build time by the same code as the tool.
 - The logic in `src/prompts/` is plain TypeScript with no browser or framework in it. The page, the downloads, the sharing images and the tests all use the same functions.
 - Cloudflare serves the built files from `dist/` as Workers static assets on the `prompt.eurth.org` custom domain (`wrangler.jsonc`). The security headers, the service worker, the manifest, `robots.txt` and `llms.txt` are written by `@eurth/style` after the build.
 - The service worker keeps the site's own pages and scripts for offline use, but not the 366 prompt pages or their sharing images: the whole bank travels in the script, so any prompt can be shown offline.
@@ -30,11 +33,14 @@ The site is built and checked but not live: it goes up when its door opens. All 
 | Addresses (`/p/348/`, `?theme=economy`) | `src/prompts/link.ts` |
 | "Answer on the Eurth forum" | `src/prompts/forum.ts`; its category in `src/site/settings.ts` |
 | Copy prompt, the Share dialog's words, alternative text | `src/prompts/describe.ts` |
+| Export: a prompt as Markdown, wikitext and plain text | `src/prompts/export.ts` |
 | Page titles and descriptions, the sitemap's list | `src/prompts/pages.ts` |
 | The prompt card as SVG, in six sizes | `src/prompts/card.ts`; its colours, from the shared tokens, in `src/site/look.ts` |
+| The tool's mark | `src/assets/mark.svg` |
+| Cards as pictures on the written pages; where the guide's pictures go | `src/site/picture.ts`, `src/site/guide.ts` |
 | The bank itself | `src/prompts/bank.ts`, `src/content/prompts.json` |
 | The launch gate, and which review batches are approved | `src/prompts/launch.ts`, `src/content/review.json` |
-| The guide | `src/content/guide.md` |
+| The guide | `src/content/guide.md` (a line such as `<!-- figure: worked -->` marks the place of a picture), `src/pages/guide.astro` |
 | Good prompts: the seven marks and the iceberg | `src/content/craft.ts`, `src/pages/good-prompts.astro` |
 | A review batch as a page to read | `tools/review-sheet.mjs`, into `docs/` |
 | The tool: card, buttons, themes, sharing, the page turn | `src/tool/PromptTool.svelte` |
@@ -49,6 +55,8 @@ The site is built and checked but not live: it goes up when its door opens. All 
 2. Run `npm test`. The tests hold every prompt to the rules: one or two sentences, 200 characters at most, plain punctuation, British spelling, no real country, nothing magical or beyond today's technology, no theme two days running, and no two prompts that open alike or ask the same thing.
 3. Write the batch up for review: `node tools/review-sheet.mjs <batch>` makes `docs/review-batch-<batch>.md`.
 4. Once Stijn has approved it, add the batch's number to `approved` in `src/content/review.json`, run `npm run images` (it needs Google Chrome) and commit what it writes. Each approved prompt's sharing image carries its words, and a test fails if a prompt has changed since its picture was made.
+
+`npm run images` only remakes pictures whose prompt has changed. After a change to the mark or to the card's design, every picture is out of date: `npm run images -- --all`. The pictures in the repository have been recompressed without loss (ImageOptim); do that again after remaking many.
 
 ## Local development
 
@@ -79,6 +87,10 @@ npm run axe
 ```
 
 ```bash
+npm run smoke
+```
+
+```bash
 npm run preview
 ```
 
@@ -90,13 +102,13 @@ npm run images
 npm run launch-check
 ```
 
-`npm test` after a build also checks the built pages (the suite's shared checks and this site's own). `npm run preview` serves the built site as Cloudflare does, headers included, on http://localhost:8787. `npm run launch-check` says what still stands between the bank and launch.
+`npm run check` checks the types of the pages (`astro check`) and of the Svelte component (`svelte-check`). `npm test` after a build also checks the built pages (the suite's shared checks and this site's own). `npm run axe` checks every built page for accessibility in both themes, which takes a while with 372 pages. `npm run smoke` opens the built site in real Chrome, under its real headers: nothing blocked, nothing stored, the service worker installed, the pages open again without signal. `npm run preview` serves the built site as Cloudflare does, headers included, on http://localhost:8787. `npm run launch-check` says what still stands between the bank and launch.
 
 ## Deployment
 
 The site runs as the `eurth-prompts` Worker (static assets only) on the Cloudflare account that holds the eurth.org zone. The custom domain in `wrangler.jsonc` owns the `prompt.eurth.org` DNS record. The three workflows in `.github/workflows/` call the shared ones in eurth-org/eurth-style:
 
-- **CI** checks, builds and tests every push and pull request, and runs axe and Lighthouse on `main`. Before the door opens it deploys nothing; after, every green push to `main` is deployed.
+- **CI** checks, builds and tests every push and pull request, and runs axe, the smoke test and Lighthouse on `main`. Before the door opens it deploys nothing; after, every green push to `main` is deployed.
 - **Launch** runs at 22:30 UTC on 21 December 2026, builds the site as it will be at the door's time (`LAUNCH_AT`), tests it, waits for 00:00 in Brussels and deploys. If it hasn't started by 22:45 UTC, start it by hand. It refuses to launch while the bank is unfinished: from the door's time on, the launch gate is part of `npm test`.
 - **Nightly** runs at 23:10 UTC: it updates @eurth/style within version 1, rebuilds (which also puts the new day's prompt on the Today page) and deploys if anything changed.
 
@@ -105,7 +117,7 @@ Deploying needs the organisation secret `CLOUDFLARE_API_TOKEN`; without it the s
 ## Releasing
 
 1. In the same commits as the work, update [roadmap.md](roadmap.md): move finished items out of Next, and add or extend the release's dated section.
-2. Run `npm run check`, `npm run build`, `npm test` and `npm run axe`.
+2. Run `npm run check`, `npm run build`, `npm test`, `npm run axe` and `npm run smoke`.
 3. Bump the version in `package.json`, merge to `main`, and tag it.
 
 ## Credits

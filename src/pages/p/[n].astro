@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import Page from '@eurth/style/components/Page.astro';
 import { site } from '../../../eurth.config.mjs';
+import mark from '../../assets/mark.svg?raw';
 import { PROMPTS } from '../../prompts/bank';
 import { altText } from '../../prompts/describe';
 import { promptPath } from '../../prompts/link';
@@ -39,6 +40,7 @@ const own = existsSync(join(process.cwd(), 'public', image));
   ogImage={own ? image : undefined}
   ogAlt={own ? altText(prompt, site.host) : undefined}
 >
+  <Fragment slot="mark" set:html={mark} />
   <PromptTool
     client:load
     start={prompt.n}

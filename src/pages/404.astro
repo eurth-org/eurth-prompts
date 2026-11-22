@@ -2,12 +2,14 @@
 // Page not found, and the easter egg: prompt 404, about a province that went missing too.
 import Page from '@eurth/style/components/Page.astro';
 import { site } from '../../eurth.config.mjs';
+import mark from '../assets/mark.svg?raw';
 import { label } from '../prompts/describe';
 import { promptPath } from '../prompts/link';
 import { LOST_PROVINCE } from '../prompts/model';
 ---
 
 <Page site={site} title="Page not found" description="This page doesn't exist. Today's prompt, the archive, the guide and the page on good prompts do." noindex>
+  <Fragment slot="mark" set:html={mark} />
   <div class="eu-stack">
     <div class="eu-prose">
       <h1>Page not found</h1>

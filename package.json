@@ -12,10 +12,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
-    "check": "astro check",
+    "check": "astro check && svelte-check",
     "test": "vitest run",
     "launch-check": "LAUNCH_CHECK=1 vitest run tests/launch.test.ts",
     "axe": "eurth-axe dist",
+    "smoke": "eurth-smoke",
     "images": "node tools/make-images.mjs",
     "deploy": "npm run build && wrangler deploy"
   },
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@types/node": "^22.19.1",
+    "svelte-check": "^4.7.8",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0",
     "wrangler": "^4.162.0"

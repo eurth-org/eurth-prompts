@@ -101,5 +101,8 @@ export const ICEBERG = {
   ],
 } as const;
 
+/** The line above a weak example on its card, where a prompt from the bank has its day and number. */
+export const WEAK_LABEL = 'A weak prompt, in nobody\'s bank';
+
 /** The day this page's words were last brought up to date. */
-export const UPDATED = '2026-11-15';
+export const UPDATED = '2026-11-22';

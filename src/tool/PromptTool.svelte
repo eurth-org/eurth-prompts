@@ -1,7 +1,9 @@
 <script lang="ts">
   /*
    * The prompt on its card, and everything a visitor can do with it: answer it on the forum,
-   * draw another, copy it, pick a theme, share it, take it as a picture.
+   * draw another, copy it, pick a theme, take it as a picture, share it, export it as text.
+   * Each of those is a card of its own, under a heading with an icon, as the handbook asks;
+   * the result leaves in two of them, "Save & share" and "Export".
    *
    * The same component is the Today page and every prompt's own page. It arrives as real HTML
    * with the prompt the page was built for; with JavaScript, the Today page then follows the
@@ -10,17 +12,23 @@
    *
    * Nothing is stored: no streaks, no history. The theme in use rides in the query string.
    */
-  import { faArrowLeft, faArrowRight, faComments, faCopy, faDownload, faShuffle } from '@fortawesome/free-solid-svg-icons';
-  import { calm, copyText as copyToClipboard, download, svgToPicture, toast } from '@eurth/style';
+  import { faMarkdown, faWikipediaW } from '@fortawesome/free-brands-svg-icons';
+  import { faCheck, faComments, faFileExport, faFileLines, faLayerGroup, faShareNodes } from '@fortawesome/free-solid-svg-icons';
+  import { calm, copyText as copyToClipboard, download, pictureFilename, svgToPicture, toast } from '@eurth/style';
+  import ExportPanel, { type ExportFormat } from '@eurth/style/components/ExportPanel.svelte';
   import Icon from '@eurth/style/components/Icon.svelte';
+  import Line from '@eurth/style/components/Line.svelte';
+  import RandomButton from '@eurth/style/components/RandomButton.svelte';
   import ShareButtons from '@eurth/style/components/ShareButtons.svelte';
+  import { lineArrowLeft, lineArrowRight, lineCalendar, lineClipboard, lineConfirm, lineDownloadOutline, lineImage } from '@eurth/style/line';
   import { onMount } from 'svelte';
   import { earlierThisMonth, moreFromTheme, neighbours, onOrAfter } from '../prompts/archive';
   import { PROMPTS } from '../prompts/bank';
   import { dateFor, deviceTimeZone, formatDate, hasDate, todayIn, type YearMonthDay } from '../prompts/calendar';
   import { CARD_SIZES, card, type CardLook, type CardMark, type CardSizeId } from '../prompts/card';
-  import { copyText, label, shared } from '../prompts/describe';
+  import { altText, copyText, label, shared } from '../prompts/describe';
   import { draw } from '../prompts/draw';
+  import { asMarkdown, asPlainText, asWikitext } from '../prompts/export';
   import { LONGEST_NATION, cleanNation, forumLink } from '../prompts/forum';
   import { numberFromPath, promptPath, promptUrl, themeFromSearch, withTheme } from '../prompts/link';
   import { LOST_PROVINCE, THEMES, find, themeName, type Prompt, type ThemeId } from '../prompts/model';
@@ -55,12 +63,17 @@
 
   const lookUp = (n: number): Prompt | undefined => (n === LOST_PROVINCE.n ? LOST_PROVINCE : find(PROMPTS, n));
 
+  // The page's own prompt and day are where the tool starts; from then on it keeps its own.
+  // svelte-ignore state_referenced_locally
   let prompt = $state<Prompt>(lookUp(start) ?? LOST_PROVINCE);
+  // svelte-ignore state_referenced_locally
   let isToday = $state(today !== null);
+  // svelte-ignore state_referenced_locally
   let date = $state<YearMonthDay | null>(today);
   let theme = $state<ThemeId | undefined>();
   let turning = $state<'' | 'out' | 'in'>('');
   let size = $state<CardSizeId>('preview');
+  let copied = $state(false);
 
   // The writer's nation, for the forum topic's title. Kept in memory for this page only.
   let nation = $state('');
@@ -72,6 +85,39 @@
   const more = $derived(isToday ? [] : moreFromTheme(PROMPTS, prompt));
 
   const picture = (sizeId: CardSizeId) => card(prompt, { size: sizeId, look, siteName, siteHost, mark });
+  const chosenSize = $derived(CARD_SIZES.find((known) => known.id === size)!);
+  const preview = $derived(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(picture(size))}`);
+
+  // The prompt as text, for the Export card: Markdown first (the forum takes it).
+  const formats: ExportFormat[] = [
+    {
+      id: 'markdown',
+      label: 'Markdown',
+      icon: faMarkdown,
+      extension: 'md',
+      type: 'text/markdown',
+      help: 'For a post on the Eurth forum, or your own notes: the prompt as a quotation, with your answer to go under it.',
+      make: () => asMarkdown(prompt, siteUrl, nation),
+    },
+    {
+      id: 'wikitext',
+      label: 'Wikitext',
+      icon: faWikipediaW,
+      extension: 'wiki.txt',
+      type: 'text/plain',
+      help: "For your nation's page on IIWiki: a section headed by the prompt, ready for your answer.",
+      make: () => asWikitext(prompt, siteUrl, nation),
+    },
+    {
+      id: 'text',
+      label: 'Plain text',
+      icon: faFileLines,
+      extension: 'txt',
+      type: 'text/plain',
+      help: 'For anywhere else: the prompt, which one it is, and its link.',
+      make: () => asPlainText(prompt, siteUrl, nation),
+    },
+  ];
   const visitorsToday = () => todayIn(deviceTimeZone());
 
   /** Puts a prompt on the card: turning the page, unless the visitor wants things still. */
@@ -118,16 +164,27 @@
   }
 
   async function copyPrompt() {
-    const copied = await copyToClipboard(copyText(prompt, siteUrl));
-    toast(copied ? 'Prompt copied. The answer is yours to write.' : "That didn't copy. Your browser may not allow it here.");
+    const ok = await copyToClipboard(copyText(prompt, siteUrl));
+    toast(ok ? 'Prompt copied. The answer is yours to write.' : "That didn't copy. Your browser may not allow it here.");
+    if (!ok) return;
+    copied = true;
+    setTimeout(() => (copied = false), 2000);
   }
 
   async function save(kind: 'svg' | 'png' | 'webp') {
-    const { width, height } = CARD_SIZES.find((known) => known.id === size)!;
+    const { width, height } = chosenSize;
     const svg = picture(size);
-    const name = `prompt-${prompt.n}-${size}.${kind}`;
-    if (kind === 'svg') download(svg, name, 'image/svg+xml');
-    else download(await svgToPicture(svg, { width, height, type: kind === 'webp' ? 'image/webp' : 'image/png' }), name);
+    const name = `prompt-${prompt.n}-${size}`;
+    if (kind === 'svg') {
+      download(svg, `${name}.svg`, 'image/svg+xml');
+      return;
+    }
+    // A browser that can't make WebP hands back a PNG: name the file for what it is, and say so.
+    const asked = kind === 'webp' ? 'image/webp' : 'image/png';
+    const made = await svgToPicture(svg, { width, height, type: asked });
+    const file = pictureFilename(name, made, asked);
+    download(made, file.filename);
+    if (file.note) toast(file.note);
   }
 
   onMount(() => {
@@ -185,28 +242,41 @@
         </a>
       </div>
       <p class="eu-help" id="nation-help">Its name goes in front of the prompt in your topic's title, so every answer on the forum has a title of its own.</p>
-      <div class="eu-row">
-        <button type="button" class="eu-btn" data-click="tumble" onclick={another}><Icon icon={faShuffle} /> Another prompt</button>
-        <button type="button" class="eu-btn" data-click="bounce" onclick={copyPrompt}><Icon icon={faCopy} /> Copy prompt</button>
-      </div>
     </article>
   </div>
 
-  <section class="part" aria-labelledby="themes-title">
-    <h2 id="themes-title">Pick a theme</h2>
-    <div class="eu-row">
-      <button type="button" class="eu-btn" aria-pressed={theme === undefined} onclick={() => pickTheme(undefined)}>Any</button>
+  <!-- The tool's own toolbar: Random first, the quickest way in. There is nothing to lose here, so it never asks. -->
+  <div class="eu-row">
+    <RandomButton onrandom={another} guard={false} label="Another prompt" tip={theme ? `A prompt on ${themeName(theme).toLowerCase()}, drawn at random` : 'A prompt drawn at random'} />
+    <button type="button" class="eu-btn" onclick={copyPrompt}>
+      <Line icon={copied ? lineConfirm : lineClipboard} />
+      {copied ? 'Copied' : 'Copy prompt'}
+    </button>
+  </div>
+
+  <section class="eu-card" aria-labelledby="themes-title">
+    <h2 class="eu-card-title" id="themes-title"><Icon icon={faLayerGroup} /> Pick a theme</h2>
+    <p class="eu-help">"Another prompt" draws at random, from the theme you pick or from all eight.</p>
+    <div class="eu-row" role="radiogroup" aria-labelledby="themes-title">
+      <label class="eu-pill">
+        <input type="radio" name="theme" value="" checked={theme === undefined} onchange={() => pickTheme(undefined)} />
+        <span class="eu-check"><Icon icon={faCheck} /></span>
+        Any
+      </label>
       {#each THEMES as option (option.id)}
-        <button type="button" class="eu-btn" aria-pressed={theme === option.id} onclick={() => pickTheme(option.id)}>{option.name}</button>
+        <label class="eu-pill">
+          <input type="radio" name="theme" value={option.id} checked={theme === option.id} onchange={() => pickTheme(option.id)} />
+          <span class="eu-check"><Icon icon={faCheck} /></span>
+          {option.name}
+        </label>
       {/each}
     </div>
-    <p class="eu-help">"Another prompt" draws at random, from the theme you pick or from all eight.</p>
   </section>
 
   {#if isToday}
     {#if earlier.length}
-      <section class="part" aria-labelledby="earlier-title">
-        <h2 id="earlier-title">Earlier this month</h2>
+      <section class="eu-card" aria-labelledby="earlier-title">
+        <h2 class="eu-card-title" id="earlier-title"><Line icon={lineCalendar} /> Earlier this month <span class="eu-count">{earlier.length}</span></h2>
         <ul class="list">
           {#each earlier as past (past.n)}
             <li>
@@ -217,20 +287,20 @@
         </ul>
       </section>
     {/if}
-    <p><a class="eu-btn eu-btn--quiet" href="/archive/">All prompts <Icon icon={faArrowRight} /></a></p>
+    <p><a class="eu-btn eu-btn--quiet" href="/archive/">All prompts <Line icon={lineArrowRight} /></a></p>
   {:else}
     <nav class="eu-row" aria-label="The days either side">
       {#if beside.previous}
-        <a class="eu-btn" href={promptPath(beside.previous.n)}><Icon icon={faArrowLeft} /> {formatDate(dateFor(beside.previous.n))}</a>
+        <a class="eu-btn" href={promptPath(beside.previous.n)}><Line icon={lineArrowLeft} /> {formatDate(dateFor(beside.previous.n))}</a>
       {/if}
       {#if beside.next}
-        <a class="eu-btn" href={promptPath(beside.next.n)}>{formatDate(dateFor(beside.next.n))} <Icon icon={faArrowRight} /></a>
+        <a class="eu-btn" href={promptPath(beside.next.n)}>{formatDate(dateFor(beside.next.n))} <Line icon={lineArrowRight} /></a>
       {/if}
       <a class="eu-btn eu-btn--quiet" href="/">Today's prompt</a>
     </nav>
     {#if more.length}
-      <section class="part" aria-labelledby="more-title">
-        <h2 id="more-title">More on {themeName(prompt.theme).toLowerCase()}</h2>
+      <section class="eu-card" aria-labelledby="more-title">
+        <h2 class="eu-card-title" id="more-title"><Icon icon={faLayerGroup} /> More on {themeName(prompt.theme).toLowerCase()}</h2>
         <ul class="list">
           {#each more as other (other.n)}
             <li>
@@ -243,32 +313,48 @@
     {/if}
   {/if}
 
-  <section class="part" aria-labelledby="share-title">
-    <h2 id="share-title">Share this prompt</h2>
+  <!-- The prompt as a picture, with its own downloads beside it. -->
+  <section class="eu-card" aria-labelledby="picture-title">
+    <h2 class="eu-card-title" id="picture-title"><Line icon={lineImage} /> The card as a picture</h2>
+    <img class="picture" src={preview} alt={altText(prompt, siteHost)} width={chosenSize.width} height={chosenSize.height} loading="lazy" />
+    <label class="eu-field">
+      <span class="eu-label">Size</span>
+      <select class="eu-select" bind:value={size}>
+        {#each CARD_SIZES as option (option.id)}
+          <option value={option.id}>{option.name}, {option.width} x {option.height}</option>
+        {/each}
+      </select>
+    </label>
+    <div class="eu-row">
+      <span class="eu-help">Download as</span>
+      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('svg')}><Line icon={lineDownloadOutline} /> SVG</button>
+      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('png')}><Line icon={lineDownloadOutline} /> PNG</button>
+      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('webp')}><Line icon={lineDownloadOutline} /> WebP</button>
+    </div>
+  </section>
+
+  <!-- Two cards, as the handbook asks: "Save & share" passes the prompt on; "Export" hands it over as text. -->
+  <section class="eu-card" aria-labelledby="share-title">
+    <h2 class="eu-card-title" id="share-title"><Icon icon={faShareNodes} /> Save &amp; share</h2>
     <ShareButtons
       url={promptUrl(prompt.n, siteUrl)}
       title={sharing.title}
       text={sharing.text}
       forumBody={sharing.forumBody}
       description={() => copyText(prompt, siteUrl)}
+      markdown={() => asMarkdown(prompt, siteUrl, nation)}
       picture={() => svgToPicture(picture('preview'), { width: 1200, height: 630 })}
       heading="Share this prompt"
       said={{ link: 'Link copied: it opens this very prompt.', description: 'Prompt copied, with where it came from.' }}
     />
-    <div class="eu-row sizes">
-      <label class="eu-field">
-        <span class="eu-label">Picture of the card</span>
-        <select class="eu-select" bind:value={size}>
-          {#each CARD_SIZES as option (option.id)}
-            <option value={option.id}>{option.name}, {option.width} x {option.height}</option>
-          {/each}
-        </select>
-      </label>
-      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('svg')}><Icon icon={faDownload} /> SVG</button>
-      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('png')}><Icon icon={faDownload} /> PNG</button>
-      <button type="button" class="eu-btn" data-click="bounce" onclick={() => save('webp')}><Icon icon={faDownload} /> WebP</button>
-    </div>
-    <p class="eu-help">Nothing is kept: no streaks, no history, no account. Miss a day and nobody knows but you.</p>
+    <p class="eu-help">
+      Every prompt has an address of its own, so its link is all there is to save. Nothing is kept in this browser: no streaks, no history, no account. Miss a day and nobody knows but you.
+    </p>
+  </section>
+
+  <section class="eu-card" aria-labelledby="export-title">
+    <h2 class="eu-card-title" id="export-title"><Icon icon={faFileExport} /> Export</h2>
+    <ExportPanel name={`prompt-${prompt.n}`} {formats} rows={7} />
   </section>
 </div>
 
@@ -287,16 +373,6 @@
 
   h1 {
     font: var(--type-title);
-  }
-
-  h2 {
-    font: var(--type-heading);
-  }
-
-  .part {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
   }
 
   /* The signature touch: the card turns like a page when a new prompt appears. The stylesheet
@@ -367,8 +443,17 @@
     font: var(--type-body);
   }
 
-  .sizes,
   .answer {
     align-items: end;
+  }
+
+  /* The picture keeps its own shape at every size; a tall one (story, pin) stays in view. */
+  .picture {
+    display: block;
+    width: auto;
+    max-width: min(100%, var(--size-measure));
+    height: auto;
+    max-height: 70vh;
+    border-radius: var(--radius-md);
   }
 </style>

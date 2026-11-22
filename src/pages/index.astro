@@ -6,8 +6,11 @@
 // rebuilds it just after midnight), so it reads right without JavaScript. With JavaScript, the
 // tool then follows the visitor's own date.
 import { buildTime, faqPage, ref, webApplication } from '@eurth/style/build';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
 import Page from '@eurth/style/components/Page.astro';
+import ThanksItem from '@eurth/style/components/ThanksItem.astro';
 import { site } from '../../eurth.config.mjs';
+import mark from '../assets/mark.svg?raw';
 import { onOrAfter } from '../prompts/archive';
 import { PROMPTS } from '../prompts/bank';
 import { DEFAULT_TIME_ZONE, todayIn } from '../prompts/calendar';
@@ -39,6 +42,8 @@ const faq = [
 ---
 
 <Page site={site} jsonld={[webApplication(site, { featureList: ['A new worldbuilding prompt every day', `${BANK_SIZE} prompts in eight themes`, 'A random prompt, from any theme or one', 'A page for every prompt', 'The prompt as a picture, in six sizes'] }), faqPage(faq)]}>
+  <!-- The tool's own mark in front of its name: a calendar leaf that carries the Eurth yurt. -->
+  <Fragment slot="mark" set:html={mark} />
   <div class="eu-stack">
     <PromptTool
       client:load
@@ -84,8 +89,10 @@ const faq = [
     </section>
   </div>
 
-  <Fragment slot="inspirations">
+  <!-- The tool's own line of the footer's "With thanks": whose work it stands on. -->
+  <ThanksItem slot="thanks" icon={faComments}>
     Prompts grew out of the forum's own <a href={ref('https://eurth.org/t/worldbuilding-prompts/17685', site.host)}>Worldbuilding Prompts</a> and the
-    <a href={ref('https://eurth.org/t/december-2020-event-daily-worldbuilding-prompts/3695', site.host)}>daily prompts of December 2020</a>.
-  </Fragment>
+    <a href={ref('https://eurth.org/t/december-2020-event-daily-worldbuilding-prompts/3695', site.host)}>daily prompts of December 2020</a>, and the members who
+    answered them.
+  </ThanksItem>
 </Page>
