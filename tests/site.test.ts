@@ -112,6 +112,20 @@ describe('the tool\'s own mark', () => {
     expect(mark).toMatch(/scale\(0\.\d+\) translate\(-128\.6 -128\.6\)/);
   });
 
+  it('has the yurt in the middle of the leaf, clear of the turned corner', () => {
+    const placed = /translate\(([\d.]+) ([\d.]+)\) scale\(([\d.]+)\) translate\((-?[\d.]+) (-?[\d.]+)\) translate\((-?[\d.]+) (-?[\d.]+)\)/.exec(mark)!;
+    const [x, y, scale, ax, ay, bx, by] = placed.slice(1).map(Number) as [number, number, number, number, number, number, number];
+    const yurt = /<g fill="#fff"[^>]*>([\s\S]*)<\/g>/.exec(mark)![1]!;
+    const points = [...yurt.matchAll(/(-?[\d.]+),(-?[\d.]+)/g)].map((match) => [x + scale * (Number(match[1]) + ax + bx), y + scale * (Number(match[2]) + ay + by)] as const);
+    const xs = points.map((point) => point[0]);
+    const ys = points.map((point) => point[1]);
+    // The leaf runs from 6 to 58 across; below its band, from 21 to 60 down.
+    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(32, 1);
+    expect((Math.min(...ys) + Math.max(...ys)) / 2).toBeCloseTo(40.5, 0);
+    const corner = /<path d="M(\d+) 60V(\d+)a/.exec(mark)!;
+    expect(Math.max(...xs)).toBeLessThan(Number(corner[1]) - 1);
+  });
+
   it('is square, flat and in the suite\'s colours', () => {
     expect(mark).toContain('viewBox="0 0 64 64"');
     expect(mark).not.toMatch(/gradient|filter|<text|<image/i);
